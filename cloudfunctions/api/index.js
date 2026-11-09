@@ -389,9 +389,11 @@ async function updateArchiveInternal(userId, payload) {
     update.domain = url ? parser.getDomain(url) : ''
     if (url) {
       update.dedupe_key = 'u:' + parser.normalizeUrlForKey(url)
-      if (item.content_type === 'wechat' || item.content_type === 'web') {
+      if (item.content_type === 'text' || item.content_type === 'wechat' || item.content_type === 'web') {
         update.content_type = /mp\.weixin\.qq\.com/i.test(url) ? 'wechat' : 'web'
       }
+    } else if (item.content_type === 'wechat' || item.content_type === 'web') {
+      update.content_type = 'text'
     }
   }
 

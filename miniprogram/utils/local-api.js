@@ -317,9 +317,11 @@ const localApi = {
       item.domain = url ? parser.getDomain(url) : ''
       if (url) {
         item.dedupe_key = 'u:' + parser.normalizeUrlForKey(url)
-        if (item.content_type === 'wechat' || item.content_type === 'web') {
+        if (item.content_type === 'text' || item.content_type === 'wechat' || item.content_type === 'web') {
           item.content_type = /mp\.weixin\.qq\.com/i.test(url) ? 'wechat' : 'web'
         }
+      } else if (item.content_type === 'wechat' || item.content_type === 'web') {
+        item.content_type = 'text'
       }
     }
     if (typeof p.note === 'string') item.note = p.note.slice(0, 2000)
