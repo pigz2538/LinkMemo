@@ -318,7 +318,7 @@ const localApi = {
       if (url) {
         item.dedupe_key = 'u:' + parser.normalizeUrlForKey(url)
         if (item.content_type === 'text' || item.content_type === 'wechat' || item.content_type === 'web') {
-          item.content_type = /mp\.weixin\.qq\.com/i.test(url) ? 'wechat' : 'web'
+          item.content_type = parser.isWechatHost(url) ? 'wechat' : 'web'
         }
       } else if (item.content_type === 'wechat' || item.content_type === 'web') {
         item.content_type = 'text'

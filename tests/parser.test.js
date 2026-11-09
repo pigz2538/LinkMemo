@@ -135,6 +135,158 @@ test('pinyin initial handles Chinese, punctuation and digits', () => {
   assert.strictEqual(firstLetter('Hello'), 'H')
 })
 
+test('parse common copied date formats', () => {
+  const full = new Date(2026, 10, 9, 21, 53).getTime()
+  assert.strictEqual(parser.parseDateLine('2026年11月09日 21:53').timestamp, full)
+  assert.strictEqual(parser.parseDateLine('2026/11/09 21:53').timestamp, full)
+  assert.strictEqual(parser.parseDateLine('2026-11-09 21:53').timestamp, full)
+  assert.strictEqual(parser.parseDateLine('2026-11-09T21:53:00').timestamp, full)
+  assert.strictEqual(parser.parseDateLine('2026年11月9日 下午9:53').timestamp, full)
+  assert.strictEqual(parser.parseDateLine('2026年11月9日21:53').timestamp, full)
+
+  const midnight = parser.parseDateLine('2026年11月9日 凌晨12:30')
+  assert.strictEqual(midnight.timestamp, new Date(2026, 10, 9, 0, 30).getTime())
+
+  const now = new Date()
+  let shortExpected = new Date(now.getFullYear(), 10, 9, 21, 53).getTime()
+  if (shortExpected > now.getTime() + 2 * 86400000) {
+    shortExpected = new Date(now.getFullYear() - 1, 10, 9, 21, 53).getTime()
+  }
+  assert.strictEqual(parser.parseDateLine('11月9日 21:53').timestamp, shortExpected)
+
+  const yesterday = new Date(now.getTime())
+  yesterday.setHours(0, 0, 0, 0)
+  yesterday.setDate(yesterday.getDate() - 1)
+  yesterday.setHours(21, 53, 0, 0)
+  assert.strictEqual(parser.parseDateLine('昨天 21:53').timestamp, yesterday.getTime())
+
+  const weekday = parser.parseDateLine('星期一 08:00')
+  assert.ok(weekday && typeof weekday.timestamp === 'number')
+  const weekdayDate = new Date(weekday.timestamp)
+  assert.strictEqual(weekdayDate.getDay(), 1)
+  assert.strictEqual(weekdayDate.getHours(), 8)
+
+  assert.strictEqual(parser.parseDateLine('2026年11月9日'), null)
+  assert.strictEqual(parser.parseDateLine('2026年2月30日 10:00'), null)
+  assert.strictEqual(parser.parseDateLine('2026年11月9日 24:00'), null)
+  assert.strictEqual(parser.parseDateLine('这不是日期'), null)
+  assert.strictEqual(parser.parseDateLine(''), null)
+})
+
+test('split messages without blank lines and mixed date formats', () => {
+  const longSender = '这是一个比较长的微信群名称用于验证发送人识别不会过短'
+  const raw = [
+    'Alice',
+    '2026/11/09 21:53',
+    '第一条',
+    'Bob',
+    '昨天 08:00',
+    '第二条',
+    longSender,
+    '2026年11月9日 下午9:53',
+    '第三条',
+    'Alice',
+    '星期一 09:00',
+    '第四条'
+  ].join('\n')
+
+  const messages = parser.splitMessages(raw)
+  assert.strictEqual(messages.length, 4)
+  assert.strictEqual(messages[0].sender, 'Alice')
+  assert.strictEqual(messages[0].body, '第一条')
+  assert.strictEqual(messages[1].sender, 'Bob')
+  assert.strictEqual(messages[2].sender, longSender)
+  assert.strictEqual(messages[3].body, '第四条')
+  assert.ok(messages[1].timeLabel.indexOf('昨天') === 0)
+  assert.ok(messages[2].timeLabel.indexOf('下午') !== -1)
+})
+
+test('fallback splitting when no message headers exist', () => {
+  const raw = [
+    'https://example.com/a 和 https://example.com/b',
+    '',
+    '一段没有发送人和时间的普通文字'
+  ].join('\n')
+  const result = parser.parseMessages(raw)
+  assert.strictEqual(result.items.length, 3)
+  assert.strictEqual(result.items[0].url, 'https://example.com/a')
+  assert.strictEqual(result.items[1].url, 'https://example.com/b')
+  assert.strictEqual(result.items[2].content_type, 'text')
+})
+
+test('one message with multiple URLs creates one record per URL', () => {
+  const body = '[链接] 两个链接 https://mp.weixin.qq.com/s/one https://example.com/two'
+  const result = parser.parseMessages('AAA\n2026年11月9日 21:00\n' + body)
+  assert.strictEqual(result.items.length, 2)
+  assert.strictEqual(result.items[0].content_type, 'wechat')
+  assert.strictEqual(result.items[1].content_type, 'web')
+  assert.strictEqual(result.items[0].url, 'https://mp.weixin.qq.com/s/one')
+  assert.strictEqual(result.items[1].url, 'https://example.com/two')
+  assert.notStrictEqual(result.items[0].dedupe_key, result.items[1].dedupe_key)
+  assert.ok(result.items[0].title)
+  assert.ok(result.items[1].title)
+})
+
+test('wechat detection uses exact hostname, not substring', () => {
+  const spoofA = parser.parseMessages('AAA\n2026年11月9日 21:00\nhttps://mp.weixin.qq.com.evil.com/s/abc')
+  assert.strictEqual(spoofA.items[0].content_type, 'web')
+
+  const spoofB = parser.parseMessages('AAA\n2026年11月9日 21:00\nhttps://example.com/?next=mp.weixin.qq.com/s/abc')
+  assert.strictEqual(spoofB.items[0].content_type, 'web')
+
+  const real = parser.parseMessages('AAA\n2026年11月9日 21:00\nhttps://mp.weixin.qq.com/s/abc')
+  assert.strictEqual(real.items[0].content_type, 'wechat')
+  assert.strictEqual(parser.isWechatHost('https://mp.weixin.qq.com/s/a'), true)
+  assert.strictEqual(parser.isWechatHost('https://mp.weixin.qq.com.evil.com/s/a'), false)
+  assert.strictEqual(parser.isWechatHost('https://www.mp.weixin.qq.com/s/a'), false)
+})
+
+test('file clue with URL is not split into multiple records', () => {
+  const body = '[文件] 试卷.pdf 下载地址 https://example.com/file'
+  const result = parser.parseMessages('AAA\n2026年11月9日 21:00\n' + body)
+  assert.strictEqual(result.items.length, 1)
+  assert.strictEqual(result.items[0].content_type, 'file')
+  assert.ok(result.items[0].title.indexOf('试卷.pdf') !== -1)
+})
+
+test('other message markers produce readable titles', () => {
+  const cases = [
+    { body: '[语音] 5"', title: '语音消息' },
+    { body: '[视频] 00:32', title: '视频消息' },
+    { body: '[位置] 长沙市岳麓区', title: '位置消息' },
+    { body: '[名片] 张三', title: '名片消息' },
+    { body: '[聊天记录] 项目群聊', title: '聊天记录' }
+  ]
+  cases.forEach((item, index) => {
+    const result = parser.parseMessages('AAA\n2026年11月9日 21:00\n' + item.body)
+    assert.strictEqual(result.items[0].content_type, 'other', 'case ' + index)
+    assert.strictEqual(result.items[0].title, item.title, 'case ' + index)
+  })
+})
+
+test('URL punctuation and tracking parameters are normalized', () => {
+  const urls = parser.extractUrls('见（https://example.com/a?x=1）。还有 "https://b.com/path"')
+  assert.strictEqual(urls[0], 'https://example.com/a?x=1')
+  assert.strictEqual(urls[1], 'https://b.com/path')
+
+  const a = 'https://example.com/a?jobId=123&utm_source=x&spm=1&fbclid=abc#frag'
+  const b = 'https://example.com/a?jobId=123&gclid=def&sharer_sharetime=1'
+  assert.strictEqual(parser.normalizeUrlForKey(a), parser.normalizeUrlForKey(b))
+  assert.ok(parser.normalizeUrlForKey(a).indexOf('jobId=123') !== -1)
+})
+
+test('pinyin initial skips punctuation and emoji', () => {
+  assert.strictEqual(firstLetter('“【测试】标题”'), 'C')
+  assert.strictEqual(firstLetter('😀 你好'), 'N')
+  assert.strictEqual(firstLetter('“”'), '#')
+})
+
+test('empty and whitespace-only input is safe', () => {
+  assert.strictEqual(parser.parseMessages('').items.length, 0)
+  assert.strictEqual(parser.parseMessages('   \n\n  ').items.length, 0)
+  assert.strictEqual(parser.parseMessages('').messageCount, 0)
+})
+
 test('parse bundled chat sample end to end', () => {
   const samplePath = path.join(__dirname, '..', '链接样例.txt')
   if (!fs.existsSync(samplePath)) {
