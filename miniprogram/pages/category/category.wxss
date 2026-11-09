@@ -183,6 +183,7 @@
   height: 56rpx;
   padding: 0 22rpx;
   border-radius: 28rpx;
+  background: #F3F6F4;
   font-size: 25rpx;
 }
 

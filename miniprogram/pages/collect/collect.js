@@ -1,5 +1,6 @@
 const config = require('../../config')
 const api = require('../../utils/api')
+const tabbar = require('../../utils/tabbar')
 
 Page({
   data: {
@@ -80,6 +81,11 @@ Page({
           ? '内容已收录'
           : '没有识别到内容'
 
+      if (result.pending_enrich_ids && result.pending_enrich_ids.length && api.enrichArchive) {
+        api.enrichArchive(result.pending_enrich_ids).catch(() => {})
+      }
+
+      tabbar.hide()
       this.setData({
         parsing: false,
         showResult: true,
@@ -112,12 +118,25 @@ Page({
   },
 
   onCloseResult() {
+    tabbar.show()
     this.setData({ showResult: false })
   },
 
   onViewArchive() {
+    tabbar.show()
     this.setData({ showResult: false })
     wx.switchTab({ url: '/pages/archive/archive' })
+  },
+
+  onHide() {
+    this.parseToken++
+    if (this.data.parsing) this.setData({ parsing: false })
+    tabbar.show()
+  },
+
+  onUnload() {
+    this.parseToken++
+    tabbar.show()
   },
 
   onShareAppMessage() {

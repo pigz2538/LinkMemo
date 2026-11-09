@@ -47,9 +47,37 @@ Page({
   onCopy() {
     const item = this.data.item
     if (!item) return
-    const data = item.url || item.content || item.source_text || item.title
+    const options = []
+    const values = []
+    if (item.url) {
+      options.push('复制链接')
+      values.push(item.url)
+    }
+    options.push('复制标题')
+    values.push(item.title)
+    const content = item.content || item.source_text
+    if (content) {
+      options.push('复制正文')
+      values.push(content)
+    }
+
+    if (options.length === 1) {
+      this.copyText(values[0])
+      return
+    }
+
+    wx.showActionSheet({
+      itemList: options,
+      success: (res) => {
+        const value = values[res.tapIndex]
+        if (value) this.copyText(value)
+      }
+    })
+  },
+
+  copyText(text) {
     wx.setClipboardData({
-      data,
+      data: String(text || ''),
       success: () => wx.showToast({ title: '已复制', icon: 'success' })
     })
   },

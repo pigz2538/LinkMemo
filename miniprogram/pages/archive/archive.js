@@ -3,6 +3,7 @@ const api = require('../../utils/api')
 const format = require('../../utils/format')
 const nav = require('../../utils/nav')
 const settings = require('../../utils/settings')
+const tabbar = require('../../utils/tabbar')
 
 const SORT_OPTIONS = [
   { key: 'saved_desc', label: '最新收录优先', chip: '按时间' },
@@ -97,6 +98,7 @@ Page({
   keywordTimer: null,
 
   onLoad() {
+    this.sortTouched = false
     const saved = settings.getSettings()
     this.syncSortLabel(saved.default_sort || this.data.sort)
     const sortOption = SORT_OPTIONS.find((item) => item.key === saved.default_sort)
@@ -106,12 +108,33 @@ Page({
   },
 
   onShow() {
+    const saved = settings.getSettings()
+    if (!this.sortTouched && saved.default_sort && saved.default_sort !== this.data.sort) {
+      this.syncSortLabel(saved.default_sort)
+    }
     this.applyPendingFilter()
+    this.syncTabBar()
     this.refresh()
+  },
+
+  onHide() {
+    tabbar.show()
   },
 
   onUnload() {
     if (this.keywordTimer) clearTimeout(this.keywordTimer)
+    tabbar.show()
+  },
+
+  syncTabBar() {
+    const shouldHide = this.data.batchMode ||
+      this.data.showSortSheet ||
+      this.data.showDateSheet ||
+      this.data.showFilterSheet ||
+      this.data.showBatchCategorySheet ||
+      this.data.showBatchTagSheet
+    if (shouldHide) tabbar.hide()
+    else tabbar.show()
   },
 
   onPullDownRefresh() {
@@ -264,10 +287,12 @@ Page({
 
   onOpenSort() {
     this.setData({ showSortSheet: true })
+    this.syncTabBar()
   },
 
   onCloseSort() {
     this.setData({ showSortSheet: false })
+    this.syncTabBar()
   },
 
   syncSortLabel(key) {
@@ -277,8 +302,10 @@ Page({
 
   onSortTap(e) {
     const key = e.currentTarget.dataset.key
+    this.sortTouched = true
     this.syncSortLabel(key)
     this.setData({ showSortSheet: false })
+    this.syncTabBar()
     this.loadList(true)
   },
 
@@ -289,10 +316,12 @@ Page({
       customFrom: this.data.dateFrom ? toDateInput(this.data.dateFrom) : toDateInput(now - 6 * 86400000),
       customTo: this.data.dateTo ? toDateInput(this.data.dateTo) : toDateInput(now)
     })
+    this.syncTabBar()
   },
 
   onCloseDate() {
     this.setData({ showDateSheet: false })
+    this.syncTabBar()
   },
 
   onDatePresetTap(e) {
@@ -327,6 +356,7 @@ Page({
       dateLabel: label,
       showDateSheet: false
     })
+    this.syncTabBar()
     this.updateActiveFilterText()
     this.loadList(true)
   },
@@ -366,6 +396,7 @@ Page({
       dateLabel: label,
       showDateSheet: false
     })
+    this.syncTabBar()
     this.updateActiveFilterText()
     this.loadList(true)
   },
@@ -373,6 +404,7 @@ Page({
   onClearFilters() {
     const now = Date.now()
     this.setData({
+      contentType: 'all',
       filterCategoryId: '',
       filterTagIds: [],
       filterTagMatch: 'and',
@@ -397,10 +429,12 @@ Page({
         checked: this.data.filterTagIds.indexOf(tag._id) !== -1
       }))
     })
+    this.syncTabBar()
   },
 
   onCloseFilter() {
     this.setData({ showFilterSheet: false })
+    this.syncTabBar()
   },
 
   onDraftCategoryTap(e) {
@@ -445,6 +479,7 @@ Page({
       })),
       showFilterSheet: false
     })
+    this.syncTabBar()
     this.updateActiveFilterText()
     this.loadList(true)
   },
@@ -454,6 +489,7 @@ Page({
       this.exitBatch()
     } else {
       this.setData({ batchMode: true })
+      this.syncTabBar()
     }
   },
 
@@ -472,6 +508,7 @@ Page({
     const id = e.currentTarget.dataset.id
     if (!this.data.batchMode) {
       this.setData({ batchMode: true })
+      this.syncTabBar()
       this.toggleSelect(id)
     }
   },
@@ -508,6 +545,7 @@ Page({
       selectedMap: {},
       selectedCount: 0
     })
+    this.syncTabBar()
   },
 
   async onBatchDelete() {
@@ -544,16 +582,26 @@ Page({
     wx.switchTab({ url: '/pages/collect/collect' })
   },
 
+  onEmptyAction() {
+    if (this.data.hasActiveFilter || this.data.keyword || this.data.contentType !== 'all') {
+      this.onClearFilters()
+      return
+    }
+    this.goCollect()
+  },
+
   onOpenBatchCategory() {
     if (!this.data.selectedCount) {
       wx.showToast({ title: '请选择记录', icon: 'none' })
       return
     }
     this.setData({ showBatchCategorySheet: true })
+    this.syncTabBar()
   },
 
   onCloseBatchCategory() {
     this.setData({ showBatchCategorySheet: false })
+    this.syncTabBar()
   },
 
   async onApplyBatchCategory(e) {
@@ -586,10 +634,12 @@ Page({
       batchTagMode: 'add',
       batchTags: this.data.tags.map((tag) => Object.assign({}, tag, { checked: false }))
     })
+    this.syncTabBar()
   },
 
   onCloseBatchTag() {
     this.setData({ showBatchTagSheet: false })
+    this.syncTabBar()
   },
 
   onBatchTagModeTap(e) {

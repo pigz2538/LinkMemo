@@ -107,11 +107,11 @@
 
     <empty-state
       wx:else
-      title="还没有收藏内容"
-      desc="把微信聊天里的链接和文字粘贴到收集页，解析后会出现在这里"
+      title="{{(hasActiveFilter || keyword || contentType != 'all') ? '没有找到匹配内容' : '还没有收藏内容'}}"
+      desc="{{(hasActiveFilter || keyword || contentType != 'all') ? '试试更换关键词，或清除部分筛选条件' : '把微信聊天里的链接和文字粘贴到收集页，解析后会出现在这里'}}"
       icon="/assets/icons/folder-gray.png"
-      action-text="去收集"
-      bind:action="goCollect"
+      action-text="{{(hasActiveFilter || keyword || contentType != 'all') ? '清除筛选' : '去收集'}}"
+      bind:action="onEmptyAction"
     />
 
     <view wx:if="{{batchMode}}" class="batch-space"></view>

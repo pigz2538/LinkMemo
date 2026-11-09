@@ -282,6 +282,7 @@ const localApi = {
     return {
       batch_id: batchId,
       items: enrichItems(db, inserted),
+      pending_enrich_ids: [],
       success_count: inserted.length,
       duplicate_count: duplicates.length,
       failed_count: failedCount,
@@ -290,6 +291,10 @@ const localApi = {
       failures: parsed.failed.slice(0, 10),
       allow_duplicates: allowDuplicates
     }
+  },
+
+  async enrichArchive() {
+    return { updated_count: 0 }
   },
 
   async updateArchive(id, patch) {

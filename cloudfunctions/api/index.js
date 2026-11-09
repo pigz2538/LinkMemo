@@ -158,8 +158,6 @@ async function parseAndSave(userId, payload) {
     selected.push(item)
   })
 
-  await enrichWebItems(selected)
-
   const batchId = uid('batch')
   const now = Date.now()
   const inserted = []
@@ -213,6 +211,10 @@ async function parseAndSave(userId, payload) {
   return {
     batch_id: batchId,
     items: inserted.map((item) => format.decorateItem(item, [], [])),
+    pending_enrich_ids: inserted
+      .filter((item) => item.content_type === 'web' && item.url)
+      .slice(0, 5)
+      .map((item) => item._id),
     success_count: inserted.length,
     duplicate_count: duplicates.length,
     failed_count: parsed.failed.length,
@@ -221,6 +223,36 @@ async function parseAndSave(userId, payload) {
     failures: parsed.failed.slice(0, 10),
     allow_duplicates: allowDuplicates
   }
+}
+
+async function enrichArchive(userId, payload) {
+  const ids = Array.isArray(payload.archive_ids) ? payload.archive_ids.slice(0, 10) : []
+  if (!ids.length) return { updated_count: 0 }
+
+  const res = await db.collection('archive_items')
+    .where({ _id: _.in(ids), user_id: userId, content_type: 'web' })
+    .limit(10)
+    .get()
+
+  const items = res.data || []
+  await enrichWebItems(items)
+
+  let count = 0
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    await db.collection('archive_items').doc(item._id).update({
+      data: {
+        title: item.title,
+        title_initial: item.title_initial,
+        title_bucket: item.title_bucket,
+        summary: item.summary,
+        fetched_at: item.fetched_at || null,
+        fetch_error: item.fetch_error || ''
+      }
+    })
+    count++
+  }
+  return { updated_count: count }
 }
 
 function buildListWhere(userId, p) {
@@ -445,27 +477,38 @@ async function deleteArchive(userId, payload) {
   const ids = Array.isArray(payload.archive_ids) ? payload.archive_ids : []
   if (!ids.length) throw new Error('请选择记录')
   const permanent = !!payload.permanent
+  const groups = chunk(ids, 50)
+  let count = 0
 
-  if (permanent) {
-    const res = await db.collection('archive_items')
-      .where({ _id: _.in(ids), user_id: userId })
-      .remove()
-    return { deleted_count: (res.stats && res.stats.removed) || 0 }
+  for (let i = 0; i < groups.length; i++) {
+    if (permanent) {
+      const res = await db.collection('archive_items')
+        .where({ _id: _.in(groups[i]), user_id: userId })
+        .remove()
+      count += (res.stats && res.stats.removed) || 0
+    } else {
+      const res = await db.collection('archive_items')
+        .where({ _id: _.in(groups[i]), user_id: userId, deleted_at: null })
+        .update({ data: { deleted_at: Date.now() } })
+      count += (res.stats && res.stats.updated) || 0
+    }
   }
 
-  const res = await db.collection('archive_items')
-    .where({ _id: _.in(ids), user_id: userId, deleted_at: null })
-    .update({ data: { deleted_at: Date.now() } })
-  return { deleted_count: (res.stats && res.stats.updated) || 0 }
+  return { deleted_count: count }
 }
 
 async function restoreArchive(userId, payload) {
   const ids = Array.isArray(payload.archive_ids) ? payload.archive_ids : []
   if (!ids.length) throw new Error('请选择记录')
-  const res = await db.collection('archive_items')
-    .where({ _id: _.in(ids), user_id: userId, deleted_at: _.neq(null) })
-    .update({ data: { deleted_at: null } })
-  return { restored_count: (res.stats && res.stats.updated) || 0 }
+  const groups = chunk(ids, 50)
+  let count = 0
+  for (let i = 0; i < groups.length; i++) {
+    const res = await db.collection('archive_items')
+      .where({ _id: _.in(groups[i]), user_id: userId, deleted_at: _.neq(null) })
+      .update({ data: { deleted_at: null } })
+    count += (res.stats && res.stats.updated) || 0
+  }
+  return { restored_count: count }
 }
 
 async function removeAll(collection, where) {
@@ -742,6 +785,9 @@ exports.main = async (event, context) => {
       case 'parseAndSave':
         checkRate(openid, action, 12, 60 * 1000)
         return ok(await parseAndSave(userId, payload))
+      case 'enrichArchive':
+        checkRate(openid, action, 10, 60 * 1000)
+        return ok(await enrichArchive(userId, payload))
       case 'getArchiveList':
         return ok(await getArchiveList(userId, payload))
       case 'getArchiveDetail':

@@ -26,9 +26,7 @@ function getStoredUser() {
 const cloudApi = {
   async init() {
     if (!wx.cloud) throw new Error('当前基础库不支持云开发')
-    if (config.cloudEnv) {
-      wx.cloud.init({ env: config.cloudEnv, traceUser: true })
-    }
+    wx.cloud.init({ env: config.cloudEnv || undefined, traceUser: true })
     try {
       const data = await this.login()
       return data
@@ -77,6 +75,12 @@ const cloudApi = {
 
   parseAndSave(rawText, options) {
     return call('parseAndSave', Object.assign({ raw_text: rawText }, options || {}))
+  },
+
+  enrichArchive(ids) {
+    return call('enrichArchive', {
+      archive_ids: Array.isArray(ids) ? ids : [ids]
+    })
   },
 
   updateArchive(id, patch) {

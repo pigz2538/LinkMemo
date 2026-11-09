@@ -51,8 +51,13 @@
         <text class="menu-text">使用帮助</text>
         <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
       </view>
-      <view class="menu-row menu-row-last" hover-class="menu-row-hover" bindtap="onOpenAbout">
+      <view class="menu-row" hover-class="menu-row-hover" bindtap="onOpenPrivacy">
         <image class="menu-icon" src="/assets/icons/info-dark.png" mode="aspectFit" />
+        <text class="menu-text">隐私说明</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="menu-row menu-row-last" hover-class="menu-row-hover" bindtap="onOpenAbout">
+        <image class="menu-icon" src="/assets/icons/link-dark.png" mode="aspectFit" />
         <text class="menu-text">关于拾链</text>
         <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
       </view>
@@ -140,6 +145,40 @@
         <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
       </view>
     </view>
+  </view>
+
+  <view wx:if="{{showPrivacySheet}}" class="mask" catchtap="onClosePrivacy"></view>
+  <view wx:if="{{showPrivacySheet}}" class="sheet privacy-sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">隐私说明</text>
+      <view class="sheet-close" bindtap="onClosePrivacy">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="privacy-block">
+      <view class="privacy-item">
+        <view class="privacy-title">只处理主动提供的内容</view>
+        <view class="privacy-text">拾链不读取微信聊天记录，只处理你主动粘贴或点击读取的剪贴板文本。</view>
+      </view>
+      <view class="privacy-item">
+        <view class="privacy-title">数据归属与隔离</view>
+        <view class="privacy-text">本地模式数据保存在当前设备的微信 Storage；云开发模式数据保存在你的 CloudBase 环境，并由服务端按微信 openid 隔离，前端不传入 user_id。</view>
+      </view>
+      <view class="privacy-item">
+        <view class="privacy-title">网页抓取边界</view>
+        <view class="privacy-text">仅访问你提交的公开 URL，不携带微信登录 Cookie 或其他会话凭证；抓取失败不会影响原始内容保存。</view>
+      </view>
+      <view class="privacy-item">
+        <view class="privacy-title">文件与图片线索</view>
+        <view class="privacy-text">只保存聊天中可见的文件名、图片名和标题文本，不读取、不上传图片或文件二进制。</view>
+      </view>
+      <view class="privacy-item">
+        <view class="privacy-title">你的控制权</view>
+        <view class="privacy-text">你可以在「数据管理」中导出全部数据、清空回收站或删除账号数据，也可以随时退出登录。</view>
+      </view>
+    </view>
+    <view class="btn btn-primary privacy-btn" hover-class="btn-hover" bindtap="onClosePrivacy">知道了</view>
   </view>
 
   <view wx:if="{{showAboutSheet}}" class="mask" catchtap="onCloseAbout"></view>

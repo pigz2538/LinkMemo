@@ -6,8 +6,8 @@ const { firstLetter } = require('./pinyin')
 
 const MAX_BYTES = 512 * 1024
 const MAX_REDIRECTS = 3
-const TIMEOUT = 4200
-const MAX_FETCH_ITEMS = 5
+const TIMEOUT = 2500
+const MAX_FETCH_ITEMS = 3
 
 const BLOCKED_HOSTS = [
   'localhost',

@@ -1,6 +1,7 @@
 const config = require('../../config')
 const api = require('../../utils/api')
 const settings = require('../../utils/settings')
+const tabbar = require('../../utils/tabbar')
 
 const SORT_OPTIONS = [
   { key: 'saved_desc', label: '最新收录优先', chip: '最新优先', desc: '默认按收录时间从新到旧' },
@@ -30,11 +31,30 @@ Page({
     currentSortLabel: '最新优先',
     showSortSheet: false,
     showDataSheet: false,
+    showPrivacySheet: false,
     showAboutSheet: false
   },
 
   onShow() {
+    this.syncTabBar()
     this.load()
+  },
+
+  onHide() {
+    tabbar.show()
+  },
+
+  onUnload() {
+    tabbar.show()
+  },
+
+  syncTabBar() {
+    const shouldHide = this.data.showSortSheet ||
+      this.data.showDataSheet ||
+      this.data.showPrivacySheet ||
+      this.data.showAboutSheet
+    if (shouldHide) tabbar.hide()
+    else tabbar.show()
   },
 
   async load() {
@@ -142,15 +162,19 @@ Page({
   },
 
   onOpenRecycle() {
+    this.setData({ showDataSheet: false })
+    this.syncTabBar()
     wx.navigateTo({ url: '/pages/recycle/recycle' })
   },
 
   onOpenSort() {
     this.setData({ showSortSheet: true })
+    this.syncTabBar()
   },
 
   onCloseSort() {
     this.setData({ showSortSheet: false })
+    this.syncTabBar()
   },
 
   onSortTap(e) {
@@ -162,19 +186,23 @@ Page({
       currentSortLabel: option.chip || option.label,
       showSortSheet: false
     })
+    this.syncTabBar()
     wx.showToast({ title: '默认排序已更新', icon: 'success' })
   },
 
   onOpenData() {
     this.setData({ showDataSheet: true })
+    this.syncTabBar()
   },
 
   onCloseData() {
     this.setData({ showDataSheet: false })
+    this.syncTabBar()
   },
 
   async onExportData() {
     this.setData({ showDataSheet: false })
+    this.syncTabBar()
     try {
       wx.showLoading({ title: '正在导出' })
       const data = await api.exportData()
@@ -202,6 +230,7 @@ Page({
 
   async onEmptyRecycle() {
     this.setData({ showDataSheet: false })
+    this.syncTabBar()
     const confirm = await new Promise((resolve) => {
       wx.showModal({
         title: '清空回收站',
@@ -224,6 +253,7 @@ Page({
 
   async onResetDemo() {
     this.setData({ showDataSheet: false })
+    this.syncTabBar()
     const confirm = await new Promise((resolve) => {
       wx.showModal({
         title: '重置演示数据',
@@ -245,6 +275,7 @@ Page({
 
   async onDeleteAccountData() {
     this.setData({ showDataSheet: false })
+    this.syncTabBar()
     const first = await new Promise((resolve) => {
       wx.showModal({
         title: '删除账号数据',
@@ -276,12 +307,24 @@ Page({
     }
   },
 
+  onOpenPrivacy() {
+    this.setData({ showPrivacySheet: true })
+    this.syncTabBar()
+  },
+
+  onClosePrivacy() {
+    this.setData({ showPrivacySheet: false })
+    this.syncTabBar()
+  },
+
   onOpenAbout() {
     this.setData({ showAboutSheet: true })
+    this.syncTabBar()
   },
 
   onCloseAbout() {
     this.setData({ showAboutSheet: false })
+    this.syncTabBar()
   },
 
   onShareAppMessage() {

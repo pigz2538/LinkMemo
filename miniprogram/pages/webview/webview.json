@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "网页",
+  "navigationStyle": "default",
+  "navigationBarBackgroundColor": "#F5FBF7",
+  "navigationBarTextStyle": "black",
   "usingComponents": {}
 }

@@ -264,6 +264,42 @@
   color: #DA5A5A;
 }
 
+.privacy-sheet {
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+}
+
+.privacy-block {
+  padding: 4rpx 0 6rpx;
+}
+
+.privacy-item {
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #F1F5F2;
+}
+
+.privacy-item:last-child {
+  border-bottom: none;
+}
+
+.privacy-title {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #233029;
+}
+
+.privacy-text {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  line-height: 1.72;
+  color: #6C786F;
+}
+
+.privacy-btn {
+  margin-top: 24rpx;
+  height: 86rpx;
+  font-size: 28rpx;
+}
+
 .about-sheet {
   align-items: center;
   text-align: center;

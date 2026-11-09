@@ -13,13 +13,6 @@ App({
 
   onLaunch() {
     this.globalData.nav = layout.getNavMetrics()
-    if (config.cloudEnabled && wx.cloud) {
-      try {
-        wx.cloud.init({ env: config.cloudEnv || undefined, traceUser: true })
-      } catch (e) {
-        console.error('cloud init failed', e)
-      }
-    }
     this.globalData.bootReady = this.boot()
   },
 

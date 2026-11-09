@@ -64,6 +64,7 @@
 
 - 微信登录状态、脱敏账号标识、收藏 / 分类 / 标签统计
 - 默认排序设置
+- 隐私说明入口
 - 数据导出（JSON 复制到剪贴板）、回收站、清空回收站、删除账号数据
 - 本地模式可重置演示数据
 - 帮助：三步教程、可识别示例、限制说明、7 条 FAQ、复制反馈模板
@@ -120,7 +121,8 @@ module.exports = {
 ```
 
 3. 右键 `cloudfunctions/api` → **上传并部署：云端安装依赖**。
-4. 在云开发控制台创建集合：
+4. 建议在云开发控制台把 `api` 云函数超时时间设置为 **20 秒**（网页元信息抓取使用独立 `enrichArchive` 调用，保存动作不会被抓取阻断）。
+5. 在云开发控制台创建集合：
 
 | 集合 | 说明 |
 | --- | --- |
@@ -130,8 +132,8 @@ module.exports = {
 | `user_tags` | 自定义标签 |
 | `parse_batches` | 导入批次统计，不保存整段剪贴板原文 |
 
-5. 数据库权限建议设为「仅创建者可读写」，实际读写均通过云函数校验 `openid`。
-6. 建议索引：
+6. 数据库权限建议设为「仅创建者可读写」，实际读写均通过云函数校验 `openid`。
+7. 建议索引：
 
 - `users.openid` 唯一
 - `archive_items`: `user_id + saved_at`
@@ -142,7 +144,9 @@ module.exports = {
 
 ### 云函数接口（action）
 
-`login`、`parseAndSave`、`getArchiveList`、`getArchiveDetail`、`updateArchive`、`batchUpdateArchive`、`batchTag`、`deleteArchive`、`restoreArchive`、`emptyRecycleBin`、`getCategories`、`getTags`、`manageCategory`、`manageTag`、`getProfileStats`、`exportData`、`clearUserData`。
+`login`、`parseAndSave`、`enrichArchive`、`getArchiveList`、`getArchiveDetail`、`updateArchive`、`batchUpdateArchive`、`batchTag`、`deleteArchive`、`restoreArchive`、`emptyRecycleBin`、`getCategories`、`getTags`、`manageCategory`、`manageTag`、`getProfileStats`、`exportData`、`clearUserData`。
+
+`parseAndSave` 先完成归档落库并返回 `pending_enrich_ids`，前端随后异步调用 `enrichArchive` 抓取网页元信息，抓取失败或超时不影响已保存内容。
 
 所有业务接口的用户身份来自 `cloud.getWXContext().OPENID`，前端不传 `user_id`。
 
@@ -154,7 +158,7 @@ module.exports = {
 - 禁止 `localhost`、私网 IP、环回、链路本地、CGNAT、组播、保留地址、云元数据地址
 - 域名解析后校验全部 A/AAAA 记录；自定义 `lookup` 在连接时再次校验，降低 DNS rebinding 风险
 - 最多 3 次重定向，每次重新校验目标 IP
-- 超时 4.2s、响应体上限 512KB、并发 3、单次最多抓取 5 个网页
+- 超时 2.5s、响应体上限 512KB、并发 3、单次最多抓取 3 个网页
 - 禁用压缩，仅提取 `og:title`、HTML title、description 和有限正文片段
 - 不发送微信 Cookie 或其他会话凭证
 - 抓取失败不阻断归档，原始链接与文本照常保存
@@ -170,6 +174,13 @@ npm test
 ```bash
 node tests/parser.test.js
 node tests/local-api.test.js
+node tests/cloud-security.test.js
+```
+
+云函数安全测试需要先安装云函数依赖：
+
+```bash
+npm install --prefix cloudfunctions/api
 ```
 
 - 解析器覆盖消息拆分、URL、公众号标题、`jobTitle`、文本/文件/图片/小程序线索、去重规范化、拼音首字母
@@ -206,6 +217,13 @@ npm run sync:cloud
 - 不承诺所有外部网页都能在小程序内打开；未配置业务域名时会复制链接。
 - 数据导出当前以 JSON 文本复制到剪贴板，后续可扩展为云存储文件下载。
 - 网页抓取能力取决于 CloudBase 云函数的网络访问与套餐规则，上线前请以控制台当前规则为准。
+
+## 开发参考
+
+- [微信小程序官方开发文档](https://developers.weixin.qq.com/miniprogram/dev/framework/)
+- [微信云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloudservice/wxcloud/)
+- [wechat-miniprogram-toolkit](https://github.com/moniq888/wechat-miniprogram-toolkit)（MIT，开发时安装并参考其项目初始化、云开发与鉴权规范）
+- [Remix Icon](https://github.com/Remix-Design/RemixIcon)（图标资源）
 
 ## License
 
