@@ -26,8 +26,8 @@ const WEEKDAY_MAP = {
   '天': 0
 }
 const SENDER_MAX_LENGTH = 80
-const URL_RE = /https?:\/\/[^\s<>"'“”‘’（）()\[\]【】{}，。！？；：、]+/gi
-const URL_TRAILING_RE = /[).,;:!?，。！？；：、'"“”‘’】》>]+$/
+const URL_RE = /https?:\/\/[^\s<>"'“”‘’（）【】{}，。！？；：、]+/gi
+const URL_TRAILING_PUNCT_RE = /[.,;:!?，。！？；：、'"“”‘’】》>]+$/
 const MARKER_TYPES = ['链接', '文件', '图片', '小程序', '聊天记录', '语音', '视频', '位置', '名片', '表情']
 const TYPE_PRIORITY = ['file', 'image', 'mini', 'other']
 
@@ -166,11 +166,27 @@ function splitMessages(rawText) {
     .map((body) => ({ sender: '', timeLabel: '', body }))
 }
 
+function trimUrlPunctuation(raw) {
+  let value = String(raw || '').replace(URL_TRAILING_PUNCT_RE, '')
+  const pairs = [['(', ')'], ['[', ']']]
+  pairs.forEach((pair) => {
+    const open = pair[0]
+    const close = pair[1]
+    while (value.charAt(value.length - 1) === close) {
+      const opens = value.split(open).length - 1
+      const closes = value.split(close).length - 1
+      if (closes <= opens) break
+      value = value.slice(0, -1)
+    }
+  })
+  return value
+}
+
 function extractUrls(text) {
   const found = String(text || '').match(URL_RE) || []
   const result = []
   found.forEach((raw) => {
-    const url = raw.replace(URL_TRAILING_RE, '')
+    const url = trimUrlPunctuation(raw)
     if (url && result.indexOf(url) === -1) result.push(url)
   })
   return result

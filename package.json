@@ -4,7 +4,7 @@
   "private": true,
   "description": "拾链 LinkMemo - 微信聊天内容收集与归档小程序",
   "scripts": {
-    "test": "node tests/parser.test.js && node tests/local-api.test.js && node tests/cloud-api.test.js && node tests/cloud-security.test.js && node tests/no-hardcoding.test.js",
+    "test": "node tests/parser.test.js && node tests/fuzz.test.js && node tests/local-api.test.js && node tests/cloud-api.test.js && node tests/cloud-security.test.js && node tests/no-hardcoding.test.js",
     "sync:cloud": "node scripts/sync-cloud-libs.js"
   }
 }

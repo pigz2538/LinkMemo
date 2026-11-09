@@ -269,6 +269,12 @@ test('URL punctuation and tracking parameters are normalized', () => {
   assert.strictEqual(urls[0], 'https://example.com/a?x=1')
   assert.strictEqual(urls[1], 'https://b.com/path')
 
+  const balanced = parser.extractUrls('维基 https://en.wikipedia.org/wiki/Function_(mathematics) 结尾')
+  assert.strictEqual(balanced[0], 'https://en.wikipedia.org/wiki/Function_(mathematics)')
+  const wrapped = parser.extractUrls('(https://example.com/wrapped) 和 [https://example.com/bracket]')
+  assert.strictEqual(wrapped[0], 'https://example.com/wrapped')
+  assert.strictEqual(wrapped[1], 'https://example.com/bracket')
+
   const a = 'https://example.com/a?jobId=123&utm_source=x&spm=1&fbclid=abc#frag'
   const b = 'https://example.com/a?jobId=123&gclid=def&sharer_sharetime=1'
   assert.strictEqual(parser.normalizeUrlForKey(a), parser.normalizeUrlForKey(b))
