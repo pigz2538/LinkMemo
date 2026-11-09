@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/collect/collect",
+    "pages/archive/archive",
+    "pages/mine/mine",
+    "pages/detail/detail",
+    "pages/edit/edit",
+    "pages/category/category",
+    "pages/help/help",
+    "pages/recycle/recycle",
+    "pages/webview/webview"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F5FBF7",
+    "navigationBarTitleText": "拾链",
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom",
+    "backgroundColor": "#F5FBF7",
+    "backgroundColorTop": "#F5FBF7",
+    "backgroundColorBottom": "#FFFFFF"
+  },
+  "tabBar": {
+    "color": "#9AA39D",
+    "selectedColor": "#2E9E5B",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/collect/collect",
+        "text": "收集",
+        "iconPath": "assets/tab/collect.png",
+        "selectedIconPath": "assets/tab/collect-active.png"
+      },
+      {
+        "pagePath": "pages/archive/archive",
+        "text": "归档",
+        "iconPath": "assets/tab/archive.png",
+        "selectedIconPath": "assets/tab/archive-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/tab/mine.png",
+        "selectedIconPath": "assets/tab/mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
+    "empty-state": "/components/empty-state/index"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

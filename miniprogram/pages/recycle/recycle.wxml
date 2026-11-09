@@ -1,0 +1,52 @@
+<view class="page recycle-page">
+  <nav-bar title="回收站" show-back="{{true}}" />
+
+  <view class="page-inner">
+    <view class="head-row">
+      <view>
+        <view class="page-title">回收站</view>
+        <view class="page-desc">已移除的归档会先进入这里，可恢复或永久删除</view>
+      </view>
+      <view wx:if="{{total}}" class="empty-btn" hover-class="empty-btn-hover" bindtap="onEmpty">
+        <image class="icon-28" src="/assets/icons/trash-red.png" mode="aspectFit" />
+        <text>清空</text>
+      </view>
+    </view>
+
+    <view class="recycle-count">共 {{total}} 条记录</view>
+
+    <view wx:if="{{loading}}" class="loading-wrap">
+      <view class="loading-spinner"></view>
+      <text>正在加载…</text>
+    </view>
+
+    <block wx:elif="{{list.length}}">
+      <view wx:for="{{list}}" wx:key="_id" class="recycle-card card">
+        <image class="recycle-icon" src="{{item.type_icon}}" mode="aspectFit" />
+        <view class="recycle-main">
+          <view class="recycle-title ellipsis-2">{{item.title}}</view>
+          <view class="recycle-meta">删除于 {{item.deleted_text}}</view>
+          <view class="recycle-actions">
+            <view class="recycle-action restore" data-id="{{item._id}}" bindtap="onRestore">
+              <image class="icon-28" src="/assets/icons/restore-green.png" mode="aspectFit" />
+              <text>恢复</text>
+            </view>
+            <view class="recycle-action delete" data-id="{{item._id}}" bindtap="onPermanentDelete">
+              <image class="icon-28" src="/assets/icons/trash-red.png" mode="aspectFit" />
+              <text>永久删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <empty-state
+      wx:else
+      title="回收站是空的"
+      desc="删除的归档记录会暂存在这里，方便你恢复"
+      icon="/assets/icons/trash-gray.png"
+      action-text="返回归档"
+      bind:action="goArchive"
+    />
+  </view>
+</view>

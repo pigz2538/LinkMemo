@@ -1,0 +1,135 @@
+<view class="page detail-page">
+  <nav-bar title="归档详情" show-back="{{true}}" />
+
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="loading-spinner"></view>
+    <text>正在加载…</text>
+  </view>
+
+  <block wx:elif="{{item}}">
+    <view class="page-inner">
+      <view class="detail-head card">
+        <view class="detail-type-row">
+          <image class="detail-type-icon" src="{{item.type_icon}}" mode="aspectFit" />
+          <view class="detail-type-main">
+            <view class="detail-type">{{item.type_label}}</view>
+            <view class="detail-date">{{item.saved_time}} 收录</view>
+          </view>
+        </view>
+        <view class="detail-title">{{item.title}}</view>
+        <view wx:if="{{item.domain}}" class="domain-row" bindtap="onCopyUrl">
+          <image class="domain-icon" src="/assets/icons/web-gray.png" mode="aspectFit" />
+          <text class="domain-text">{{item.domain}}</text>
+          <image class="domain-copy" src="/assets/icons/copy-gray.png" mode="aspectFit" />
+        </view>
+      </view>
+
+      <view wx:if="{{item.summary}}" class="summary-card">
+        <view class="block-label">摘要</view>
+        <view class="summary-text">{{item.summary}}</view>
+      </view>
+
+      <view class="organize card">
+        <view class="organize-row">
+          <text class="organize-label">分类</text>
+          <view class="organize-values">
+            <view
+              wx:if="{{item.category_name != '未分类'}}"
+              class="pill category-pill"
+              bindtap="onCategoryTap"
+            >
+              <view class="color-dot" style="background: {{item.category_color}};"></view>
+              <text>{{item.category_name}}</text>
+            </view>
+            <text wx:else class="muted">未分类</text>
+          </view>
+        </view>
+        <view class="organize-row">
+          <text class="organize-label">标签</text>
+          <view class="organize-values">
+            <view
+              wx:for="{{item.tags}}"
+              wx:key="_id"
+              class="tag-pill"
+              data-id="{{item._id}}"
+              bindtap="onTagTap"
+            >
+              <view class="color-dot" style="background: {{item.color}};"></view>
+              <text>{{item.name}}</text>
+            </view>
+            <text wx:if="{{!item.tags.length}}" class="muted">无标签</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{item.url}}" class="url-card card" bindtap="onCopyUrl">
+        <view class="url-label">原始链接</view>
+        <view class="url-text ellipsis-2">{{item.url}}</view>
+        <view class="url-copy">
+          <image class="icon-28" src="/assets/icons/copy-green.png" mode="aspectFit" />
+          <text>复制链接</text>
+        </view>
+      </view>
+
+      <view class="content-card card">
+        <view class="block-label">内容</view>
+        <view class="content-text">{{item.content || item.source_text}}</view>
+      </view>
+
+      <view wx:if="{{item.note}}" class="note-card card">
+        <view class="block-label">备注</view>
+        <view class="content-text">{{item.note}}</view>
+      </view>
+
+      <view class="meta-card card">
+        <view class="meta-row">
+          <text class="meta-label">收录时间</text>
+          <text class="meta-value">{{item.saved_time}}</text>
+        </view>
+        <view wx:if="{{item.source_time_text}}" class="meta-row">
+          <text class="meta-label">原始消息时间</text>
+          <text class="meta-value">{{item.source_time_text}}</text>
+        </view>
+        <view wx:if="{{item.source_sender}}" class="meta-row">
+          <text class="meta-label">消息来源</text>
+          <text class="meta-value">{{item.source_sender}}</text>
+        </view>
+        <view class="meta-row source-toggle" bindtap="toggleSource">
+          <text class="meta-label">原始消息</text>
+          <text class="source-toggle-text">{{showSource ? '收起' : '展开'}}</text>
+        </view>
+        <view wx:if="{{showSource}}" class="source-box">{{item.source_text}}</view>
+      </view>
+
+      <view class="detail-space"></view>
+    </view>
+
+    <view class="bottombar detail-bar">
+      <view class="detail-action" hover-class="detail-action-hover" bindtap="onCopy">
+        <image class="detail-action-icon" src="/assets/icons/copy-gray.png" mode="aspectFit" />
+        <text>复制</text>
+      </view>
+      <view class="detail-action" hover-class="detail-action-hover" bindtap="onOpen">
+        <image class="detail-action-icon" src="/assets/icons/open-gray.png" mode="aspectFit" />
+        <text>打开</text>
+      </view>
+      <view class="detail-action" hover-class="detail-action-hover" bindtap="onEdit">
+        <image class="detail-action-icon" src="/assets/icons/edit-dark.png" mode="aspectFit" />
+        <text>编辑</text>
+      </view>
+      <view class="detail-action detail-delete" hover-class="detail-action-hover" bindtap="onDelete">
+        <image class="detail-action-icon" src="/assets/icons/trash-red.png" mode="aspectFit" />
+        <text>删除</text>
+      </view>
+    </view>
+  </block>
+
+  <empty-state
+    wx:else
+    title="记录不存在"
+    desc="{{error || '这条记录可能已被删除或不存在'}}"
+    icon="/assets/icons/folder-gray.png"
+    action-text="返回"
+    bind:action="onBackToArchive"
+  />
+</view>

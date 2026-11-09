@@ -1,0 +1,293 @@
+<view class="page archive-page">
+  <nav-bar brand="{{true}}" />
+
+  <view class="page-inner">
+    <view class="head-row">
+      <view class="page-title">我的归档</view>
+      <view class="head-actions">
+        <view class="head-icon-btn" hover-class="head-icon-hover" bindtap="onOpenRecycle">
+          <image class="icon-36" src="/assets/icons/trash-gray.png" mode="aspectFit" />
+        </view>
+        <view class="manage-btn" hover-class="manage-btn-hover" bindtap="onManageTap">{{batchMode ? '完成' : '管理'}}</view>
+      </view>
+    </view>
+
+    <view class="search-box">
+      <image class="search-icon" src="/assets/icons/search-gray.png" mode="aspectFit" />
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜索标题、关键词…"
+        placeholder-class="search-placeholder"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <view wx:if="{{keyword}}" class="search-clear" bindtap="onClearKeyword">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+
+    <scroll-view class="type-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}" enhanced="{{true}}">
+      <view class="type-row">
+        <view
+          wx:for="{{typeFilters}}"
+          wx:key="key"
+          class="chip type-chip {{contentType == item.key ? 'active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onTypeTap"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+
+    <view class="toolbar">
+      <view class="tool-chip" hover-class="tool-chip-hover" bindtap="onOpenSort">
+        <image class="tool-icon" src="/assets/icons/sort-dark.png" mode="aspectFit" />
+        <text>{{sortLabel}}</text>
+        <image class="tool-arrow" src="/assets/icons/chevron-down-gray.png" mode="aspectFit" />
+      </view>
+      <view class="tool-chip" hover-class="tool-chip-hover" bindtap="onOpenDate">
+        <image class="tool-icon" src="/assets/icons/calendar-gray.png" mode="aspectFit" />
+        <text>{{dateLabel}}</text>
+        <image class="tool-arrow" src="/assets/icons/chevron-down-gray.png" mode="aspectFit" />
+      </view>
+      <view class="tool-chip filter-chip {{hasActiveFilter ? 'filter-on' : ''}}" hover-class="tool-chip-hover" bindtap="onOpenFilter">
+        <image class="tool-icon" src="/assets/icons/filter-dark.png" mode="aspectFit" />
+        <text>筛选</text>
+        <view wx:if="{{hasActiveFilter}}" class="filter-dot"></view>
+      </view>
+    </view>
+
+    <view wx:if="{{hasActiveFilter}}" class="active-filter-row">
+      <image class="active-filter-icon" src="/assets/icons/tag-green.png" mode="aspectFit" />
+      <text class="active-filter-text ellipsis-1">{{activeFilterText}}</text>
+      <view class="active-filter-clear" bindtap="onClearFilters">清除</view>
+    </view>
+
+    <view class="result-count">{{batchMode ? '已选择 ' + selectedCount + ' 项' : '共 ' + total + ' 条收藏'}}</view>
+
+    <view wx:if="{{loading}}" class="loading-wrap">
+      <view class="loading-spinner"></view>
+      <text>正在加载…</text>
+    </view>
+
+    <block wx:elif="{{list.length}}">
+      <view
+        wx:for="{{list}}"
+        wx:key="_id"
+        class="archive-card {{selectedMap[item._id] ? 'selected' : ''}}"
+        data-id="{{item._id}}"
+        bindtap="onCardTap"
+        bindlongpress="onCardLongPress"
+        hover-class="archive-card-hover"
+      >
+        <image class="archive-thumb" src="{{item.type_icon}}" mode="aspectFit" />
+        <view class="archive-main">
+          <view class="archive-title ellipsis-2">{{item.title}}</view>
+          <view class="archive-meta">
+            <view class="pill">{{item.type_label}}</view>
+            <text class="archive-date">{{item.saved_date}}</text>
+            <block wx:if="{{item.category_name != '未分类'}}">
+              <text class="meta-dot">·</text>
+              <text class="archive-cat ellipsis-1">{{item.category_name}}</text>
+            </block>
+          </view>
+        </view>
+        <view wx:if="{{batchMode}}" class="checkbox {{selectedMap[item._id] ? 'on' : ''}}">
+          <image wx:if="{{selectedMap[item._id]}}" src="/assets/icons/check-white.png" mode="aspectFit" />
+        </view>
+      </view>
+
+      <view class="load-more">
+        <text wx:if="{{loadingMore}}">加载更多…</text>
+        <text wx:elif="{{hasMore}}">上滑加载更多</text>
+        <text wx:else>没有更多了</text>
+      </view>
+    </block>
+
+    <empty-state
+      wx:else
+      title="还没有收藏内容"
+      desc="把微信聊天里的链接和文字粘贴到收集页，解析后会出现在这里"
+      icon="/assets/icons/folder-gray.png"
+      action-text="去收集"
+      bind:action="goCollect"
+    />
+
+    <view wx:if="{{batchMode}}" class="batch-space"></view>
+  </view>
+
+  <view wx:if="{{batchMode}}" class="bottombar batch-bar">
+    <view class="batch-action" bindtap="onSelectAll">
+      <image class="batch-icon" src="/assets/icons/check-circle-green.png" mode="aspectFit" />
+      <text>{{selectedCount == list.length && list.length ? '取消全选' : '全选'}}</text>
+    </view>
+    <view class="batch-action" bindtap="onOpenBatchCategory">
+      <image class="batch-icon" src="/assets/icons/folder-dark.png" mode="aspectFit" />
+      <text>分类</text>
+    </view>
+    <view class="batch-action" bindtap="onOpenBatchTag">
+      <image class="batch-icon" src="/assets/icons/tag-dark.png" mode="aspectFit" />
+      <text>标签</text>
+    </view>
+    <view class="batch-action batch-delete" bindtap="onBatchDelete">
+      <image class="batch-icon" src="/assets/icons/trash-red.png" mode="aspectFit" />
+      <text>删除</text>
+    </view>
+  </view>
+
+  <view wx:if="{{showSortSheet}}" class="mask" catchtap="onCloseSort"></view>
+  <view wx:if="{{showSortSheet}}" class="sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">排序方式</text>
+      <view class="sheet-close" bindtap="onCloseSort">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="option-list">
+      <view wx:for="{{sortOptions}}" wx:key="key" class="option-row" data-key="{{item.key}}" bindtap="onSortTap">
+        <view class="option-main">
+          <view class="option-label">{{item.label}}</view>
+          <view class="option-desc">列表排序：{{item.chip}}</view>
+        </view>
+        <image wx:if="{{sort == item.key}}" class="option-check" src="/assets/icons/check-green.png" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDateSheet}}" class="mask" catchtap="onCloseDate"></view>
+  <view wx:if="{{showDateSheet}}" class="sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">收录日期</text>
+      <view class="sheet-close" bindtap="onCloseDate">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="date-grid">
+      <view
+        wx:for="{{datePresets}}"
+        wx:key="key"
+        class="date-option {{datePreset == item.key ? 'on' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onDatePresetTap"
+      >{{item.label}}</view>
+    </view>
+    <view wx:if="{{datePreset == 'custom'}}" class="custom-date">
+      <view class="date-row">
+        <text class="date-row-label">开始日期</text>
+        <picker mode="date" value="{{customFrom}}" bindchange="onCustomFrom">
+          <view class="date-picker-value">{{customFrom}}</view>
+        </picker>
+      </view>
+      <view class="date-row">
+        <text class="date-row-label">结束日期</text>
+        <picker mode="date" value="{{customTo}}" bindchange="onCustomTo">
+          <view class="date-picker-value">{{customTo}}</view>
+        </picker>
+      </view>
+      <view class="btn btn-primary custom-date-btn" hover-class="btn-hover" bindtap="onApplyCustomDate">应用日期范围</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showFilterSheet}}" class="mask" catchtap="onCloseFilter"></view>
+  <view wx:if="{{showFilterSheet}}" class="sheet filter-sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">筛选归档</text>
+      <view class="sheet-close" bindtap="onCloseFilter">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <scroll-view class="sheet-body" scroll-y="{{true}}">
+      <view class="filter-section-title">自定义分类</view>
+      <view class="filter-grid">
+        <view
+          wx:for="{{categoryOptions}}"
+          wx:key="_id"
+          class="filter-option {{draftCategoryId == item._id ? 'on' : ''}}"
+          data-id="{{item._id}}"
+          bindtap="onDraftCategoryTap"
+        >{{item.name}}</view>
+      </view>
+
+      <view class="filter-section-title">标签（可多选）</view>
+      <view class="tag-select-wrap">
+        <view
+          wx:for="{{tags}}"
+          wx:key="_id"
+          class="tag-select {{item.checked ? 'on' : ''}}"
+          data-id="{{item._id}}"
+          bindtap="onDraftTagTap"
+        >
+          <view class="color-dot" style="background: {{item.color}};"></view>
+          <text>{{item.name}}</text>
+        </view>
+        <view wx:if="{{!tags.length}}" class="filter-empty">还没有标签，可在「分类与标签」中创建</view>
+      </view>
+
+      <view wx:if="{{draftTagIds.length > 1}}" class="tag-match-row">
+        <text class="tag-match-label">多标签匹配</text>
+        <view class="segment tag-match-segment">
+          <view class="segment-item {{draftTagMatch == 'and' ? 'active' : ''}}" data-mode="and" bindtap="onDraftTagMatchTap">同时满足</view>
+          <view class="segment-item {{draftTagMatch == 'or' ? 'active' : ''}}" data-mode="or" bindtap="onDraftTagMatchTap">任一满足</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="sheet-foot">
+      <view class="btn btn-ghost filter-btn" hover-class="btn-hover" bindtap="onResetFilter">重置</view>
+      <view class="btn btn-primary apply-btn" hover-class="btn-hover" bindtap="onApplyFilter">应用筛选</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showBatchCategorySheet}}" class="mask" catchtap="onCloseBatchCategory"></view>
+  <view wx:if="{{showBatchCategorySheet}}" class="sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">批量设置分类</text>
+      <view class="sheet-close" bindtap="onCloseBatchCategory">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="filter-grid batch-category-grid">
+      <view class="filter-option" data-id="" bindtap="onApplyBatchCategory">未分类</view>
+      <view wx:for="{{categories}}" wx:key="_id" class="filter-option" data-id="{{item._id}}" bindtap="onApplyBatchCategory">
+        <view class="color-dot" style="background: {{item.color}};"></view>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showBatchTagSheet}}" class="mask" catchtap="onCloseBatchTag"></view>
+  <view wx:if="{{showBatchTagSheet}}" class="sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">批量管理标签</text>
+      <view class="sheet-close" bindtap="onCloseBatchTag">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="segment batch-tag-mode">
+      <view class="segment-item {{batchTagMode == 'add' ? 'active' : ''}}" data-mode="add" bindtap="onBatchTagModeTap">添加标签</view>
+      <view class="segment-item {{batchTagMode == 'remove' ? 'active' : ''}}" data-mode="remove" bindtap="onBatchTagModeTap">移除标签</view>
+    </view>
+    <view class="tag-select-wrap batch-tag-wrap">
+      <view
+        wx:for="{{batchTags}}"
+        wx:key="_id"
+        class="tag-select {{item.checked ? 'on' : ''}}"
+        data-id="{{item._id}}"
+        bindtap="onBatchTagTap"
+      >
+        <view class="color-dot" style="background: {{item.color}};"></view>
+        <text>{{item.name}}</text>
+      </view>
+      <view wx:if="{{!batchTags.length}}" class="filter-empty">还没有标签，可在「分类与标签」中创建</view>
+    </view>
+    <view class="sheet-foot">
+      <view class="btn btn-ghost filter-btn" hover-class="btn-hover" bindtap="onCloseBatchTag">取消</view>
+      <view class="btn btn-primary apply-btn" hover-class="btn-hover" bindtap="onApplyBatchTags">应用标签</view>
+    </view>
+  </view>
+</view>

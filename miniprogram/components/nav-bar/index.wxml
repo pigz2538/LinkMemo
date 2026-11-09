@@ -1,0 +1,14 @@
+<view class="nav {{transparent ? 'nav-transparent' : ''}}" style="padding-top: {{statusBarHeight}}px;">
+  <view class="nav-inner" style="height: {{navBarHeight}}px;">
+    <view wx:if="{{showBack}}" class="nav-back" hover-class="nav-back-hover" bindtap="onBack">
+      <image class="nav-back-icon" src="/assets/icons/back-dark.png" mode="aspectFit" />
+    </view>
+
+    <view wx:if="{{brand}}" class="nav-brand">
+      <image class="nav-brand-icon" src="/assets/icons/link-green.png" mode="aspectFit" />
+      <text class="nav-brand-text">拾链</text>
+    </view>
+
+    <view wx:if="{{title}}" class="nav-title {{showBack ? 'nav-title-center' : ''}}">{{title}}</view>
+  </view>
+</view>

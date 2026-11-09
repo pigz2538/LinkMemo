@@ -1,0 +1,162 @@
+<view class="page mine-page">
+  <nav-bar brand="{{true}}" />
+
+  <view class="page-inner">
+    <view class="profile card" hover-class="profile-hover" bindtap="onAvatarTap">
+      <image class="avatar" src="{{avatar}}" mode="aspectFill" />
+      <view class="profile-main">
+        <view class="profile-name">{{displayName}}</view>
+        <view class="profile-sub">{{loginText}}</view>
+      </view>
+      <image class="profile-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+    </view>
+
+    <view class="stats-panel">
+      <view class="stats-col" data-type="total" bindtap="onStatsTap">
+        <text class="stats-num">{{stats.total_count}}</text>
+        <text class="stats-label">我的收藏</text>
+      </view>
+      <view class="stats-line"></view>
+      <view class="stats-col" data-type="category" bindtap="onStatsTap">
+        <text class="stats-num">{{stats.category_count}}</text>
+        <text class="stats-label">分类</text>
+      </view>
+      <view class="stats-line"></view>
+      <view class="stats-col" data-type="tag" bindtap="onStatsTap">
+        <text class="stats-num">{{stats.tag_count}}</text>
+        <text class="stats-label">标签</text>
+      </view>
+    </view>
+
+    <view class="menu-card card">
+      <view class="menu-row" hover-class="menu-row-hover" bindtap="onOpenCategory">
+        <image class="menu-icon" src="/assets/icons/tag-dark.png" mode="aspectFit" />
+        <text class="menu-text">分类与标签</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="menu-row" hover-class="menu-row-hover" bindtap="onOpenSort">
+        <image class="menu-icon" src="/assets/icons/sort-dark.png" mode="aspectFit" />
+        <text class="menu-text">排序与显示</text>
+        <text class="menu-extra">{{currentSortLabel}}</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="menu-row" hover-class="menu-row-hover" bindtap="onOpenData">
+        <image class="menu-icon" src="/assets/icons/cloud-dark.png" mode="aspectFit" />
+        <text class="menu-text">数据管理</text>
+        <text class="menu-extra">导出 · 回收站</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="menu-row" hover-class="menu-row-hover" bindtap="onOpenHelp">
+        <image class="menu-icon" src="/assets/icons/help-dark.png" mode="aspectFit" />
+        <text class="menu-text">使用帮助</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="menu-row menu-row-last" hover-class="menu-row-hover" bindtap="onOpenAbout">
+        <image class="menu-icon" src="/assets/icons/info-dark.png" mode="aspectFit" />
+        <text class="menu-text">关于拾链</text>
+        <image class="menu-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+
+    <view wx:if="{{loggedIn}}" class="logout-btn" hover-class="logout-hover" bindtap="onLogout">退出登录</view>
+    <view wx:else class="logout-btn login-btn" hover-class="logout-hover" bindtap="onLogin">微信登录</view>
+
+    <view class="mine-footer">
+      <text>拾链 v{{version}}</text>
+      <text class="mine-footer-dot">·</text>
+      <text>{{cloudEnabled ? '云开发模式' : '本地模式'}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{showSortSheet}}" class="mask" catchtap="onCloseSort"></view>
+  <view wx:if="{{showSortSheet}}" class="sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">默认排序方式</text>
+      <view class="sheet-close" bindtap="onCloseSort">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="option-list">
+      <view wx:for="{{sortOptions}}" wx:key="key" class="option-row" data-key="{{item.key}}" bindtap="onSortTap">
+        <view class="option-main">
+          <view class="option-label">{{item.label}}</view>
+          <view class="option-desc">{{item.desc}}</view>
+        </view>
+        <image wx:if="{{currentSort == item.key}}" class="option-check" src="/assets/icons/check-green.png" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDataSheet}}" class="mask" catchtap="onCloseData"></view>
+  <view wx:if="{{showDataSheet}}" class="sheet data-sheet">
+    <view class="sheet-handle"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">数据管理</text>
+      <view class="sheet-close" bindtap="onCloseData">
+        <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="data-list">
+      <view class="data-row" hover-class="data-row-hover" bindtap="onOpenRecycle">
+        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/trash-gray.png" mode="aspectFit" /></view>
+        <view class="data-main">
+          <view class="data-title">回收站</view>
+          <view class="data-desc">恢复或永久删除已移除的记录</view>
+        </view>
+        <text class="data-extra">{{stats.recycle_count}} 条</text>
+        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="data-row" hover-class="data-row-hover" bindtap="onExportData">
+        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/download-dark.png" mode="aspectFit" /></view>
+        <view class="data-main">
+          <view class="data-title">导出数据</view>
+          <view class="data-desc">以 JSON 格式复制到剪贴板</view>
+        </view>
+        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="data-row" hover-class="data-row-hover" bindtap="onEmptyRecycle">
+        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/trash-red.png" mode="aspectFit" /></view>
+        <view class="data-main">
+          <view class="data-title">清空回收站</view>
+          <view class="data-desc">永久删除回收站全部记录</view>
+        </view>
+        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view wx:if="{{!cloudEnabled}}" class="data-row" hover-class="data-row-hover" bindtap="onResetDemo">
+        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/restore-green.png" mode="aspectFit" /></view>
+        <view class="data-main">
+          <view class="data-title">重置演示数据</view>
+          <view class="data-desc">恢复示例归档、分类与标签</view>
+        </view>
+        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+      <view class="data-row data-row-danger" hover-class="data-row-hover" bindtap="onDeleteAccountData">
+        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/logout-red.png" mode="aspectFit" /></view>
+        <view class="data-main">
+          <view class="data-title">删除账号数据</view>
+          <view class="data-desc">删除全部归档、分类和标签，不可恢复</view>
+        </view>
+        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showAboutSheet}}" class="mask" catchtap="onCloseAbout"></view>
+  <view wx:if="{{showAboutSheet}}" class="sheet about-sheet">
+    <view class="sheet-handle"></view>
+    <view class="about-logo">
+      <image class="about-logo-icon" src="/assets/icons/link-green.png" mode="aspectFit" />
+    </view>
+    <view class="about-title">拾链</view>
+    <view class="about-version">v{{version}}</view>
+    <view class="about-text">把微信聊天中值得保留的链接、公众号文章和文字内容，快速收集并长期整理。</view>
+    <view class="about-points">
+      <view class="about-point"><view class="about-dot"></view><text>只处理你主动粘贴或读取的剪贴板内容，不读取聊天记录</text></view>
+      <view class="about-point"><view class="about-dot"></view><text>每个微信用户的数据相互隔离</text></view>
+      <view class="about-point"><view class="about-dot"></view><text>网页抓取失败时仍会保留原始链接与文本</text></view>
+      <view class="about-point"><view class="about-dot"></view><text>文件、图片、小程序线索只保存可见文本，不包含二进制文件</text></view>
+    </view>
+    <view class="btn btn-primary about-btn" hover-class="btn-hover" bindtap="onCloseAbout">知道了</view>
+  </view>
+</view>

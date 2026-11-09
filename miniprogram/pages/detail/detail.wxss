@@ -1,0 +1,298 @@
+.detail-page {
+  padding-bottom: 20rpx;
+}
+
+.detail-head {
+  margin-top: 22rpx;
+  padding: 30rpx;
+}
+
+.detail-type-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.detail-type-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+}
+
+.detail-type-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.detail-type {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #2E9E5B;
+}
+
+.detail-date {
+  font-size: 22rpx;
+  color: #9AA39D;
+}
+
+.detail-title {
+  margin-top: 24rpx;
+  font-size: 44rpx;
+  line-height: 1.38;
+  font-weight: 700;
+  color: #17221C;
+  word-break: break-all;
+}
+
+.domain-row {
+  margin-top: 22rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  background: #F4F8F5;
+  border-radius: 14rpx;
+  padding: 14rpx 18rpx;
+}
+
+.domain-icon {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.domain-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 24rpx;
+  color: #6F7C73;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.domain-copy {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.summary-card {
+  margin-top: 22rpx;
+  background: #F0F9F4;
+  border-radius: 24rpx;
+  padding: 26rpx 28rpx;
+}
+
+.block-label {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: #2E9E5B;
+  letter-spacing: 1rpx;
+  margin-bottom: 12rpx;
+}
+
+.summary-text {
+  font-size: 27rpx;
+  line-height: 1.65;
+  color: #40544A;
+}
+
+.organize {
+  margin-top: 22rpx;
+  padding: 8rpx 28rpx;
+}
+
+.organize-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 22rpx;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #F1F5F2;
+}
+
+.organize-row:last-child {
+  border-bottom: none;
+}
+
+.organize-label {
+  width: 74rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: #8A948D;
+  line-height: 44rpx;
+}
+
+.organize-values {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.category-pill {
+  height: 44rpx;
+  gap: 8rpx;
+  font-size: 23rpx;
+}
+
+.category-pill .color-dot {
+  width: 14rpx;
+  height: 14rpx;
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  height: 44rpx;
+  padding: 0 18rpx;
+  border-radius: 22rpx;
+  background: #F3F6F4;
+  color: #4B5951;
+  font-size: 23rpx;
+  margin: 0;
+}
+
+.tag-pill .color-dot {
+  width: 14rpx;
+  height: 14rpx;
+}
+
+.url-card {
+  margin-top: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.url-label {
+  font-size: 23rpx;
+  color: #8A948D;
+}
+
+.url-text {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  line-height: 1.55;
+  color: #4C8DFF;
+  word-break: break-all;
+}
+
+.url-copy {
+  margin-top: 18rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  height: 56rpx;
+  padding: 0 20rpx;
+  border-radius: 28rpx;
+  background: #EAF6EE;
+  color: #257E4B;
+  font-size: 23rpx;
+}
+
+.content-card,
+.note-card,
+.meta-card {
+  margin-top: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.content-text {
+  font-size: 28rpx;
+  line-height: 1.78;
+  color: #2A3830;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  font-size: 25rpx;
+}
+
+.meta-label {
+  color: #8A948D;
+}
+
+.meta-value {
+  color: #4B5951;
+  max-width: 420rpx;
+  text-align: right;
+}
+
+.source-toggle {
+  border-top: 1rpx solid #F1F5F2;
+  margin-top: 6rpx;
+  padding-top: 20rpx;
+}
+
+.source-toggle-text {
+  color: #2E9E5B;
+  font-size: 24rpx;
+}
+
+.source-box {
+  margin-top: 6rpx;
+  background: #F7FAF8;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 25rpx;
+  line-height: 1.7;
+  color: #526058;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 500rpx;
+  overflow-y: auto;
+}
+
+.detail-space {
+  height: 150rpx;
+}
+
+.detail-bar {
+  justify-content: space-around;
+}
+
+.detail-action {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 22rpx;
+  color: #4B5951;
+}
+
+.detail-action-hover {
+  opacity: 0.65;
+}
+
+.detail-action-icon {
+  width: 42rpx;
+  height: 42rpx;
+}
+
+.detail-delete {
+  color: #DA5A5A;
+}
+
+.loading-wrap {
+  padding: 120rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22rpx;
+  color: #8A948D;
+  font-size: 24rpx;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 5rpx solid #E2F1E8;
+  border-top-color: #2E9E5B;
+  animation: spin 0.8s linear infinite;
+}

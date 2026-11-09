@@ -1,0 +1,146 @@
+<view class="page collect-page">
+  <nav-bar transparent="{{true}}" />
+
+  <view class="hero">
+    <view class="logo-tile">
+      <image class="logo-icon" src="/assets/icons/link-green.png" mode="aspectFit" />
+    </view>
+    <view class="hero-title">拾链</view>
+    <view class="hero-sub">把微信聊天里的有用内容收集起来</view>
+  </view>
+
+  <view class="page-inner collect-body">
+    <view class="paste-card">
+      <textarea
+        class="paste-input"
+        value="{{text}}"
+        maxlength="{{maxLength}}"
+        placeholder="粘贴微信聊天内容…"
+        placeholder-class="paste-placeholder"
+        show-confirm-bar="{{false}}"
+        cursor-spacing="32"
+        bindinput="onInput"
+      />
+      <view class="paste-counter">{{charCount}} / {{maxLength}}</view>
+    </view>
+
+    <view class="action-row">
+      <view class="btn btn-soft clipboard-btn" hover-class="btn-hover" bindtap="onReadClipboard">
+        <image class="btn-icon" src="/assets/icons/clipboard-green.png" mode="aspectFit" />
+        <text>读取剪贴板</text>
+      </view>
+      <view class="btn btn-primary parse-btn" hover-class="btn-hover" bindtap="onParse">
+        <image class="btn-icon" src="/assets/icons/sparkles-white.png" mode="aspectFit" />
+        <text>开始解析</text>
+      </view>
+    </view>
+
+    <view class="dup-row">
+      <view class="dup-text">
+        <text>重复内容</text>
+        <text class="dup-sub">同一链接默认只收录一次</text>
+      </view>
+      <view class="dup-toggle" bindtap="onToggleDuplicates">
+        <view class="switch {{allowDuplicates ? 'switch-on' : ''}}">
+          <view class="switch-knob"></view>
+        </view>
+        <text class="dup-state">{{allowDuplicates ? '仍然保存' : '自动跳过'}}</text>
+      </view>
+    </view>
+
+    <view class="usage">
+      <view class="divider-text">使用方法</view>
+      <view class="steps">
+        <view class="step">
+          <view class="step-num">1</view>
+          <text class="step-text">复制聊天内容</text>
+        </view>
+        <image class="step-arrow" src="/assets/icons/arrow-right-gray.png" mode="aspectFit" />
+        <view class="step">
+          <view class="step-num">2</view>
+          <text class="step-text">粘贴到上方</text>
+        </view>
+        <image class="step-arrow" src="/assets/icons/arrow-right-gray.png" mode="aspectFit" />
+        <view class="step">
+          <view class="step-num">3</view>
+          <text class="step-text">开始解析</text>
+        </view>
+      </view>
+      <view class="usage-note">支持一次粘贴多条混合消息，自动拆分、识别类型并归档</view>
+    </view>
+  </view>
+
+  <view wx:if="{{parsing}}" class="parsing-mask">
+    <view class="parsing-card">
+      <view class="parsing-spinner"></view>
+      <view class="parsing-title">正在解析…</view>
+      <view class="parsing-desc">识别消息边界、链接与内容类型</view>
+      <view class="parsing-cancel" hover-class="btn-hover" bindtap="onCancelParse">取消</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showResult}}" class="mask" catchtap="onCloseResult"></view>
+  <view wx:if="{{showResult}}" class="sheet result-sheet">
+    <view class="sheet-handle"></view>
+    <view class="result-head">
+      <view class="result-icon-wrap">
+        <image class="result-icon" src="/assets/icons/check-circle-green.png" mode="aspectFit" />
+      </view>
+      <view class="result-title">{{resultTitle}}</view>
+      <view class="result-sub">内容已保存到你的个人归档库</view>
+    </view>
+
+    <view class="result-stats">
+      <view class="result-stat">
+        <text class="stat-num stat-green">{{result.success_count}}</text>
+        <text class="stat-label">成功</text>
+      </view>
+      <view class="stat-line"></view>
+      <view class="result-stat">
+        <text class="stat-num stat-orange">{{result.duplicate_count}}</text>
+        <text class="stat-label">重复</text>
+      </view>
+      <view class="stat-line"></view>
+      <view class="result-stat">
+        <text class="stat-num stat-red">{{result.failed_count}}</text>
+        <text class="stat-label">失败</text>
+      </view>
+    </view>
+
+    <scroll-view wx:if="{{result.items.length || result.duplicates.length}}" class="result-list" scroll-y>
+      <view wx:for="{{result.items}}" wx:key="_id" class="result-item">
+        <image class="result-type-icon" src="{{item.type_icon}}" mode="aspectFit" />
+        <view class="result-item-main">
+          <view class="result-item-title ellipsis-1">{{item.title}}</view>
+          <view class="result-item-meta">{{item.type_label}}<text wx:if="{{item.domain}}"> · {{item.domain}}</text></view>
+        </view>
+      </view>
+
+      <view wx:if="{{result.duplicates.length}}" class="result-dup-head">已跳过的重复内容</view>
+      <view wx:for="{{result.duplicates}}" wx:key="title" class="result-item result-item-dup">
+        <image class="result-type-icon" src="/assets/icons/type-other.png" mode="aspectFit" />
+        <view class="result-item-main">
+          <view class="result-item-title ellipsis-1">{{item.title}}</view>
+          <view class="result-item-meta">已收录，默认跳过</view>
+        </view>
+      </view>
+
+      <view wx:if="{{result.failures.length}}" class="result-dup-head">失败明细</view>
+      <view wx:for="{{result.failures}}" wx:key="body" class="result-item result-item-dup">
+        <image class="result-type-icon" src="/assets/icons/type-other.png" mode="aspectFit" />
+        <view class="result-item-main">
+          <view class="result-item-title ellipsis-1">{{item.body}}</view>
+          <view class="result-item-meta">{{item.reason}}</view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view wx:if="{{result.duplicate_count && !result.allow_duplicates}}" class="result-hint">
+      重复内容已跳过；如需保留，可在首页切换为「仍然保存」后重新解析。
+    </view>
+    <view class="result-actions">
+      <view class="btn btn-soft result-btn" hover-class="btn-hover" bindtap="onCloseResult">继续收集</view>
+      <view class="btn btn-primary result-btn" hover-class="btn-hover" bindtap="onViewArchive">查看归档</view>
+    </view>
+  </view>
+</view>

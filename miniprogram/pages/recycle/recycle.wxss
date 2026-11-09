@@ -1,0 +1,122 @@
+.recycle-page {
+  padding-bottom: 30rpx;
+}
+
+.head-row {
+  margin-top: 18rpx;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.page-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #8A948D;
+  max-width: 500rpx;
+}
+
+.empty-btn {
+  height: 62rpx;
+  padding: 0 22rpx;
+  border-radius: 31rpx;
+  background: #FCEFEF;
+  color: #DA5A5A;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+}
+
+.empty-btn-hover {
+  opacity: 0.75;
+}
+
+.recycle-count {
+  margin: 28rpx 4rpx 16rpx;
+  font-size: 23rpx;
+  color: #9AA39D;
+}
+
+.recycle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+  border-radius: 24rpx;
+}
+
+.recycle-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 18rpx;
+  flex-shrink: 0;
+}
+
+.recycle-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.recycle-title {
+  font-size: 28rpx;
+  line-height: 1.45;
+  font-weight: 600;
+  color: #1B2620;
+}
+
+.recycle-meta {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9AA39D;
+}
+
+.recycle-actions {
+  margin-top: 16rpx;
+  display: flex;
+  gap: 14rpx;
+}
+
+.recycle-action {
+  height: 54rpx;
+  padding: 0 18rpx;
+  border-radius: 27rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 22rpx;
+}
+
+.recycle-action.restore {
+  background: #EAF6EE;
+  color: #257E4B;
+}
+
+.recycle-action.delete {
+  background: #FCEFEF;
+  color: #DA5A5A;
+}
+
+.loading-wrap {
+  padding: 100rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22rpx;
+  color: #8A948D;
+  font-size: 24rpx;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 5rpx solid #E2F1E8;
+  border-top-color: #2E9E5B;
+  animation: spin 0.8s linear infinite;
+}

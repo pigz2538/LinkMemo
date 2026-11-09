@@ -1,0 +1,73 @@
+<view class="page help-page">
+  <nav-bar title="使用帮助" show-back="{{true}}" />
+
+  <view class="page-inner">
+    <view class="help-hero">
+      <view class="help-hero-title">三步开始使用</view>
+      <view class="help-hero-sub">从微信聊天到个人归档，只需要一次粘贴</view>
+    </view>
+
+    <view class="steps-card card">
+      <view wx:for="{{steps}}" wx:key="title" class="help-step">
+        <view class="help-step-num">{{index + 1}}</view>
+        <view class="help-step-main">
+          <view class="help-step-title">{{item.title}}</view>
+          <view class="help-step-desc">{{item.desc}}</view>
+        </view>
+        <image class="help-step-icon" src="{{item.icon}}" mode="aspectFit" />
+      </view>
+    </view>
+
+    <view class="section-head">
+      <text class="section-head-title">可识别的内容</text>
+      <view class="section-head-action" bindtap="onCopyExample">
+        <image class="icon-28" src="/assets/icons/copy-green.png" mode="aspectFit" />
+        <text>复制格式示例</text>
+      </view>
+    </view>
+
+    <view class="example-list">
+      <view wx:for="{{examples}}" wx:key="type" class="example-card card">
+        <view class="example-type">{{item.type}}</view>
+        <view class="example-sample">{{item.sample}}</view>
+      </view>
+    </view>
+
+    <view class="limit-card">
+      <view class="limit-head">
+        <image class="limit-icon" src="/assets/icons/info-dark.png" mode="aspectFit" />
+        <text>使用限制</text>
+      </view>
+      <view wx:for="{{limits}}" wx:key="*this" class="limit-row">
+        <view class="limit-dot"></view>
+        <text>{{item}}</text>
+      </view>
+    </view>
+
+    <view class="section-head faq-head">
+      <text class="section-head-title">常见问题</text>
+    </view>
+
+    <view class="faq-card card">
+      <view wx:for="{{faqs}}" wx:key="q" class="faq-item" data-index="{{index}}" bindtap="toggleFaq">
+        <view class="faq-question">
+          <text class="faq-q-text">{{item.q}}</text>
+          <image class="faq-arrow {{item.open ? 'faq-arrow-open' : ''}}" src="/assets/icons/chevron-down-gray.png" mode="aspectFit" />
+        </view>
+        <view wx:if="{{item.open}}" class="faq-answer">{{item.a}}</view>
+      </view>
+    </view>
+
+    <view class="feedback-card card">
+      <view class="feedback-title">没有找到答案？</view>
+      <view class="feedback-desc">欢迎反馈解析异常、识别错误或使用建议。</view>
+      <view class="feedback-actions">
+        <view class="btn btn-soft feedback-btn" hover-class="btn-hover" bindtap="onCopyFeedback">复制反馈模板</view>
+        <view class="btn btn-primary feedback-btn" hover-class="btn-hover" bindtap="onFeedback">反馈问题</view>
+      </view>
+      <view class="feedback-email" bindtap="onCopyEmail">反馈邮箱：{{feedbackEmail}}</view>
+    </view>
+
+    <view class="help-footer">拾链 v{{version}} · {{cloudEnabled ? '云开发模式' : '本地模式'}}</view>
+  </view>
+</view>

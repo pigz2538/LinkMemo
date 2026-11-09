@@ -11,3 +11,6 @@ project.private.config.json
 .vscode/
 dist/
 coverage/
+
+# 本地聊天样例含个人信息，不随仓库上传
+链接样例.txt

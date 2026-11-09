@@ -1,0 +1,4 @@
+<web-view wx:if="{{url}}" src="{{url}}" binderror="onError"></web-view>
+<view wx:else class="webview-empty">
+  <text>链接为空</text>
+</view>
