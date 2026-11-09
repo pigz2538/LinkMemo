@@ -17,6 +17,11 @@ Page({
 
   parseToken: 0,
 
+  onShow() {
+    if (this.data.showResult) tabbar.hide()
+    else tabbar.show()
+  },
+
   onInput(e) {
     const value = e.detail.value || ''
     this.setData({ text: value, charCount: value.length, parseError: '' })

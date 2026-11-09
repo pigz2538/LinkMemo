@@ -127,7 +127,7 @@ Page({
     try {
       await api.deleteArchive([this.data.id])
       wx.showToast({ title: '已移入回收站', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 350)
+      setTimeout(() => this.goBack(), 350)
     } catch (e) {
       wx.showToast({ title: e.message || '删除失败', icon: 'none' })
     }
@@ -145,8 +145,17 @@ Page({
     nav.openArchiveWithFilter({ tag_ids: [id] })
   },
 
+  goBack() {
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack()
+    } else {
+      wx.switchTab({ url: '/pages/archive/archive' })
+    }
+  },
+
   onBackToArchive() {
-    wx.navigateBack()
+    this.goBack()
   },
 
   onShareAppMessage() {
