@@ -426,6 +426,8 @@ async function run() {
   assert.strictEqual(parsedA.success_count, 3)
   assert.strictEqual(parsedA.failed_count, 0)
   assert.strictEqual(parsedA.items.length, 3)
+  assert.strictEqual(parsedA.total_count, 3)
+  assert.strictEqual(parsedA.message_count, 3)
   const aWechatId = parsedA.items[0]._id
   const aWebId = parsedA.items[1]._id
   const aTextId = parsedA.items[2]._id

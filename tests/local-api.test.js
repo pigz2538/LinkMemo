@@ -113,6 +113,8 @@ async function run() {
   assert.strictEqual(first.success_count, 2)
   assert.strictEqual(first.duplicate_count, 0)
   assert.ok(first.items.length === 2)
+  assert.strictEqual(first.total_count, 2)
+  assert.strictEqual(first.message_count, 2)
 
   const second = await api.parseAndSave(text)
   assert.strictEqual(second.success_count, 0)

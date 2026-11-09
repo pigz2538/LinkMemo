@@ -199,7 +199,8 @@ async function parseAndSave(userId, payload) {
   const batch = {
     user_id: userId,
     raw_length: rawText.length,
-    total_count: parsed.messageCount,
+    total_count: parsed.items.length,
+    message_count: parsed.messageCount,
     success_count: inserted.length,
     duplicate_count: duplicates.length,
     failed_count: parsed.failed.length,
@@ -218,7 +219,8 @@ async function parseAndSave(userId, payload) {
     success_count: inserted.length,
     duplicate_count: duplicates.length,
     failed_count: parsed.failed.length,
-    total_count: parsed.messageCount,
+    total_count: parsed.items.length,
+    message_count: parsed.messageCount,
     duplicates,
     failures: parsed.failed.slice(0, 10),
     allow_duplicates: allowDuplicates
