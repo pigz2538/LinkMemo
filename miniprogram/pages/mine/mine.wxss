@@ -1,5 +1,5 @@
 .mine-page {
-  padding-bottom: 30rpx;
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .profile {

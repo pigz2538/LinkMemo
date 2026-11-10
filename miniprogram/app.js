@@ -8,6 +8,7 @@ App({
     loggedIn: false,
     nav: null,
     cloudEnabled: config.cloudEnabled,
+    tabBarHidden: false,
     bootReady: null
   },
 

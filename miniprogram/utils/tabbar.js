@@ -1,13 +1,34 @@
+function getBar() {
+  try {
+    const pages = getCurrentPages()
+    const page = pages[pages.length - 1]
+    if (page && typeof page.getTabBar === 'function') {
+      return page.getTabBar()
+    }
+  } catch (e) {}
+  return null
+}
+
+function apply(hidden) {
+  try {
+    const app = getApp()
+    if (app && app.globalData) app.globalData.tabBarHidden = hidden
+  } catch (e) {}
+  const bar = getBar()
+  if (bar && bar.setData) bar.setData({ hidden })
+}
+
 function hide() {
-  if (wx.hideTabBar) {
-    wx.hideTabBar({ animation: false, fail: function () {} })
-  }
+  apply(true)
 }
 
 function show() {
-  if (wx.showTabBar) {
-    wx.showTabBar({ animation: false, fail: function () {} })
-  }
+  apply(false)
 }
 
-module.exports = { hide, show }
+function setSelected(index) {
+  const bar = getBar()
+  if (bar && bar.setData) bar.setData({ selected: index })
+}
+
+module.exports = { hide, show, setSelected }

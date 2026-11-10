@@ -36,6 +36,7 @@ Page({
   },
 
   onShow() {
+    tabbar.setSelected(2)
     this.syncTabBar()
     this.load()
   },

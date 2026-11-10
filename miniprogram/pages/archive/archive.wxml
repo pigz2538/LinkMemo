@@ -114,7 +114,6 @@
       bind:action="onEmptyAction"
     />
 
-    <view wx:if="{{batchMode}}" class="batch-space"></view>
   </view>
 
   <view wx:if="{{batchMode}}" class="bottombar batch-bar">

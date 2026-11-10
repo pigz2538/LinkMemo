@@ -18,6 +18,7 @@ Page({
   parseToken: 0,
 
   onShow() {
+    tabbar.setSelected(0)
     if (this.data.showResult) tabbar.hide()
     else tabbar.show()
   },

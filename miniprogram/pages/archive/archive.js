@@ -111,6 +111,7 @@ Page({
   },
 
   onShow() {
+    tabbar.setSelected(1)
     const saved = settings.getSettings()
     if (!this.sortTouched && saved.default_sort && saved.default_sort !== this.data.sort) {
       this.syncSortLabel(saved.default_sort)

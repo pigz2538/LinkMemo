@@ -1,5 +1,5 @@
 .collect-page {
-  padding-bottom: 40rpx;
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .hero {

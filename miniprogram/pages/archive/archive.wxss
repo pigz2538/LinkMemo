@@ -1,5 +1,5 @@
 .archive-page {
-  padding-bottom: 20rpx;
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .head-row {
@@ -292,10 +292,6 @@
   text-align: center;
   font-size: 25rpx;
   color: #A5AEA8;
-}
-
-.batch-space {
-  height: 150rpx;
 }
 
 .batch-bar {
