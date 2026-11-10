@@ -172,6 +172,36 @@ module.exports = {
 - 解析规则只保留 PRD 明确要求的常量：微信文章域名、`[链接]/[文件]/[图片]/[小程序]` 等消息标记、`jobTitle` 参数、常见追踪参数。
 - 测试额外覆盖了真实样例之外的场景：多种日期格式、无消息头降级、单条多 URL、伪造微信域名、非法日期、空输入、其他消息标记等。
 
+## 阿里云服务器基线
+
+已在 Ubuntu 24.04 服务器上配置：
+
+- Node.js 20 LTS / npm
+- Nginx 反向代理，监听 80 端口
+- systemd 服务 `linkmemo-api`
+- 2GB swap
+- UFW 已启用，放行 SSH / 80 / 443
+
+当前服务：
+
+- 健康检查：`http://47.95.148.233/health`
+- 应用目录：`/opt/linkmemo`
+- 服务命令：`sudo systemctl status linkmemo-api`
+- 日志：`sudo journalctl -u linkmemo-api -f`
+
+部署脚本：`deploy/setup-server.sh`
+
+```bash
+scp -i ~/.ssh/id_rsa deploy/setup-server.sh admin@47.95.148.233:/tmp/setup-linkmemo.sh
+ssh -i ~/.ssh/id_rsa admin@47.95.148.233 "bash /tmp/setup-linkmemo.sh"
+```
+
+注意：当前 `/opt/linkmemo/server.js` 只是健康检查占位服务，尚未迁移 CloudBase 业务 API。微信小程序生产环境还需要：
+
+- 已备案并可用的 HTTPS 域名（在公众平台配置 request 合法域名）
+- 小程序 AppID / AppSecret，用于服务端换取 openid
+- 数据库选型与业务 API 实现
+
 ## 测试
 
 ```bash
