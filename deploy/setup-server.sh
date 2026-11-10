@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="/opt/linkmemo"
-APP_USER="admin"
-SERVICE_NAME="linkmemo-api"
 NODE_MAJOR_REQUIRED=20
 
 log() {
@@ -49,66 +46,7 @@ else
   log "node $(node -v) already installed"
 fi
 
-log "4/7 application directory and placeholder service"
-sudo mkdir -p "$APP_DIR"
-sudo chown "$APP_USER:$APP_USER" "$APP_DIR"
-if [ ! -f "$APP_DIR/server.js" ]; then
-  cat > "$APP_DIR/server.js" <<'NODE'
-const http = require('http')
-
-const port = Number(process.env.PORT || 3000)
-const server = http.createServer((req, res) => {
-  if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' })
-    res.end(JSON.stringify({
-      ok: true,
-      service: 'linkmemo-api',
-      time: new Date().toISOString()
-    }))
-    return
-  }
-  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' })
-  res.end(JSON.stringify({ ok: true, message: 'LinkMemo API placeholder' }))
-})
-
-server.listen(port, '127.0.0.1', () => {
-  console.log('LinkMemo API listening on ' + port)
-})
-NODE
-  chown "$APP_USER:$APP_USER" "$APP_DIR/server.js"
-fi
-
-log "5/7 systemd service"
-sudo tee "/etc/systemd/system/${SERVICE_NAME}.service" >/dev/null <<UNIT
-[Unit]
-Description=LinkMemo API
-After=network.target
-
-[Service]
-Type=simple
-User=${APP_USER}
-Group=${APP_USER}
-WorkingDirectory=${APP_DIR}
-Environment=NODE_ENV=production
-Environment=PORT=3000
-EnvironmentFile=-/etc/linkmemo/api.env
-ExecStart=/usr/bin/node ${APP_DIR}/server.js
-Restart=always
-RestartSec=3
-NoNewPrivileges=true
-PrivateTmp=true
-
-[Install]
-WantedBy=multi-user.target
-UNIT
-
-sudo mkdir -p /etc/linkmemo
-sudo touch /etc/linkmemo/api.env
-sudo chmod 600 /etc/linkmemo/api.env
-sudo systemctl daemon-reload
-sudo systemctl enable --now "$SERVICE_NAME"
-
-log "6/7 nginx reverse proxy"
+log "4/5 nginx reverse proxy"
 sudo tee /etc/nginx/sites-available/linkmemo >/dev/null <<'NGINX'
 server {
     listen 80 default_server;
@@ -144,7 +82,7 @@ sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
 
-log "7/7 ufw"
+log "5/5 ufw"
 sudo ufw allow OpenSSH >/dev/null || true
 sudo ufw allow 80/tcp >/dev/null || true
 sudo ufw allow 443/tcp >/dev/null || true
