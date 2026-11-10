@@ -3,17 +3,24 @@
 }
 
 .hero {
-  padding: 44rpx 40rpx 0;
+  padding: 8rpx 40rpx 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
 
+.hero-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+}
+
 .logo-tile {
-  width: 132rpx;
-  height: 132rpx;
-  border-radius: 36rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 30rpx;
   background: linear-gradient(145deg, #E7F6EC 0%, #DDF1E4 100%);
   display: flex;
   align-items: center;
@@ -22,27 +29,27 @@
 }
 
 .logo-icon {
-  width: 76rpx;
-  height: 76rpx;
+  width: 64rpx;
+  height: 64rpx;
 }
 
 .hero-title {
-  margin-top: 24rpx;
-  font-size: 78rpx;
+  font-size: 64rpx;
   font-weight: 800;
-  letter-spacing: 8rpx;
+  letter-spacing: 4rpx;
+  line-height: 1.1;
   color: #0F1A13;
 }
 
 .hero-sub {
-  margin-top: 14rpx;
-  font-size: 32rpx;
+  margin-top: 12rpx;
+  font-size: 30rpx;
   color: #68756D;
   letter-spacing: 1rpx;
 }
 
 .collect-body {
-  margin-top: 44rpx;
+  margin-top: 28rpx;
 }
 
 .paste-card {
