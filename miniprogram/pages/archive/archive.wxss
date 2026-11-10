@@ -46,6 +46,38 @@
   opacity: 0.75;
 }
 
+.sync-tip {
+  margin-top: 18rpx;
+  background: #F0F9F4;
+  border-radius: 18rpx;
+  padding: 14rpx 18rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.sync-tip-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+}
+
+.sync-tip-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: #4C6B58;
+}
+
+.sync-tip-action {
+  flex-shrink: 0;
+  padding-left: 8rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: #2E9E5B;
+}
+
 .search-box {
   margin-top: 28rpx;
   height: 92rpx;

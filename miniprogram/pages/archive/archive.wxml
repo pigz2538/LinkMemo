@@ -12,6 +12,12 @@
       </view>
     </view>
 
+    <view wx:if="{{syncTip}}" class="sync-tip">
+      <image class="sync-tip-icon" src="/assets/icons/cloud-green.png" mode="aspectFit" />
+      <text class="sync-tip-text">{{syncTip}}</text>
+      <view wx:if="{{showSyncLogin}}" class="sync-tip-action" bindtap="onSyncTipLogin">去登录</view>
+    </view>
+
     <view class="search-box">
       <image class="search-icon" src="/assets/icons/search-gray.png" mode="aspectFit" />
       <input

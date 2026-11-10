@@ -86,6 +86,9 @@ Page({
 
     activeFilterText: '',
     hasActiveFilter: false,
+    loggedIn: false,
+    showSyncLogin: false,
+    syncTip: '',
 
     batchMode: false,
     selectedIds: [],
@@ -118,7 +121,49 @@ Page({
     }
     this.applyPendingFilter()
     this.syncTabBar()
+    this.loadSyncTip()
     this.refresh()
+  },
+
+  async loadSyncTip() {
+    try {
+      const app = getApp()
+      if (app && app.globalData && app.globalData.bootReady) {
+        try {
+          await app.globalData.bootReady
+        } catch (e) {}
+      }
+      const session = await api.getSession()
+      const loggedIn = !!session.loggedIn
+      let syncTip = '登录后可在云端保存并同步账号信息'
+      if (!config.cloudEnabled) {
+        syncTip = '当前为本地保存；登录后可云端同步账号信息'
+      } else if (loggedIn) {
+        syncTip = '账号信息已云端保存并同步'
+      }
+      this.setData({
+        loggedIn,
+        showSyncLogin: config.cloudEnabled && !loggedIn,
+        syncTip
+      })
+    } catch (e) {
+      this.setData({
+        loggedIn: false,
+        showSyncLogin: config.cloudEnabled,
+        syncTip: '登录后可在云端保存并同步账号信息'
+      })
+    }
+  },
+
+  async onSyncTipLogin() {
+    try {
+      await api.login()
+      wx.showToast({ title: '登录成功', icon: 'success' })
+      await this.loadSyncTip()
+      this.refresh()
+    } catch (e) {
+      wx.showToast({ title: e.message || '登录失败', icon: 'none' })
+    }
   },
 
   onHide() {
