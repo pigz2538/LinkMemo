@@ -69,7 +69,7 @@
     <view class="mine-footer">
       <text>拾链 v{{version}}</text>
       <text class="mine-footer-dot">·</text>
-      <text>{{cloudEnabled ? '云开发模式' : '本地模式'}}</text>
+      <text>{{modeLabel}}</text>
     </view>
   </view>
 
@@ -155,7 +155,7 @@
       </view>
       <view class="privacy-item">
         <view class="privacy-title">数据归属与隔离</view>
-        <view class="privacy-text">本地模式数据保存在当前设备的微信 Storage；云开发模式数据保存在你的 CloudBase 环境，并由服务端按微信 openid 隔离，前端不传入 user_id。</view>
+        <view class="privacy-text">本地模式数据保存在当前设备的微信 Storage；云端模式数据保存在你的云数据库，并由服务端按登录账号隔离，前端不传入 user_id。</view>
       </view>
       <view class="privacy-item">
         <view class="privacy-title">网页抓取边界</view>

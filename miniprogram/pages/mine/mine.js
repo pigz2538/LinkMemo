@@ -2,6 +2,7 @@ const config = require('../../config')
 const api = require('../../utils/api')
 const settings = require('../../utils/settings')
 const tabbar = require('../../utils/tabbar')
+const { getModeLabel } = require('../../utils/mode')
 
 const SORT_OPTIONS = [
   { key: 'saved_desc', label: '最新收录优先', chip: '最新优先', desc: '默认按收录时间从新到旧' },
@@ -25,7 +26,7 @@ Page({
     },
     loading: true,
     version: config.version,
-    cloudEnabled: config.cloudEnabled,
+    modeLabel: getModeLabel(),
     sortOptions: SORT_OPTIONS,
     currentSort: config.defaultSort,
     currentSortLabel: '最新优先',
@@ -60,18 +61,39 @@ Page({
 
   async load() {
     try {
-      const results = await Promise.all([api.getSession(), api.getProfileStats()])
-      const session = results[0] || {}
-      const stats = results[1] || {}
+      const app = getApp()
+      if (app && app.globalData && app.globalData.bootReady) {
+        try {
+          await app.globalData.bootReady
+        } catch (e) {}
+      }
+      const session = await api.getSession() || {}
       const user = session.user || null
       const currentSort = settings.getSettings().default_sort || config.defaultSort
       const sortOption = SORT_OPTIONS.find((item) => item.key === currentSort) || SORT_OPTIONS[0]
+
+      if (!session.loggedIn) {
+        this.setData({
+          user,
+          loggedIn: false,
+          displayName: '未登录',
+          avatar: user && user.avatar_url ? user.avatar_url : '/assets/images/avatar-bear.png',
+          loginText: '点击登录 · 微信小程序',
+          stats: { total_count: 0, category_count: 0, tag_count: 0, recycle_count: 0, type_counts: {} },
+          currentSort,
+          currentSortLabel: sortOption.chip || sortOption.label,
+          loading: false
+        })
+        return
+      }
+
+      const stats = await api.getProfileStats()
       this.setData({
         user,
-        loggedIn: !!session.loggedIn,
-        displayName: user && session.loggedIn ? (user.display_name || '微信用户') : '未登录',
+        loggedIn: true,
+        displayName: user && user.display_name ? user.display_name : '微信用户',
         avatar: user && user.avatar_url ? user.avatar_url : '/assets/images/avatar-bear.png',
-        loginText: session.loggedIn ? '微信登录 · 个人版' : '点击登录 · 微信小程序',
+        loginText: '微信登录 · 个人版',
         stats: Object.assign({}, this.data.stats, stats),
         currentSort,
         currentSortLabel: sortOption.chip || sortOption.label,
@@ -135,7 +157,8 @@ Page({
       this.setData({
         loggedIn: false,
         displayName: '未登录',
-        loginText: '点击登录 · 微信小程序'
+        loginText: '点击登录 · 微信小程序',
+        stats: { total_count: 0, category_count: 0, tag_count: 0, recycle_count: 0, type_counts: {} }
       })
       wx.showToast({ title: '已退出登录', icon: 'success' })
     } catch (e) {

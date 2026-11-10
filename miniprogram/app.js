@@ -7,7 +7,7 @@ App({
     user: null,
     loggedIn: false,
     nav: null,
-    cloudEnabled: config.cloudEnabled,
+    backendMode: config.backendMode,
     tabBarHidden: false,
     bootReady: null
   },

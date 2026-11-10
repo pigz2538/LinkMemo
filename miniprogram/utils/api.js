@@ -1,5 +1,9 @@
 const config = require('../config')
 
-module.exports = config.cloudEnabled
+const mode = config.backendMode || (config.cloudEnabled ? 'cloud' : 'local')
+
+module.exports = mode === 'cloud'
   ? require('./cloud-api')
-  : require('./local-api')
+  : mode === 'http'
+    ? require('./http-api')
+    : require('./local-api')

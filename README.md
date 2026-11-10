@@ -77,23 +77,33 @@
 ```
 miniprogram/                 微信原生小程序
   app.json / app.wxss        全局配置与主题
-  config.js                  本地/云端模式开关
+  config.js                  local / cloud / http 后端模式开关
   components/                nav-bar、empty-state
   pages/                     收集、归档、我的、详情、编辑、分类标签、帮助、回收站、web-view
   utils/
-    parser.js                解析引擎（前端与云函数共用）
+    parser.js                解析引擎（前端、云函数、自建服务共用）
     pinyin*.js               中文首字母
     local-api.js             本地 Storage 数据层（首次启动为空库）
     cloud-api.js             CloudBase 调用封装
+    http-api.js              自建服务器 HTTP 调用封装
     api.js                   模式切换
     format.js                类型元信息与展示装饰
     layout.js                安全区/胶囊导航计算
     settings.js              默认排序设置
+    mode.js                  运行模式标签
 cloudfunctions/api/          CloudBase 云函数
   index.js                   action 路由、鉴权、CRUD
   lib/parser.js              同步后的解析引擎
   lib/fetcher.js             axios + cheerio 网页元信息抓取（SSRF 防护）
-tests/                       解析器与本地数据层测试
+server/                      自建 Node.js API（PostgreSQL）
+  index.js                   Express 入口、JWT 鉴权、/health
+  auth.js                    微信 code 换 openid、JWT 签发与校验
+  handlers.js                与云函数一致的 action 业务实现
+  sql/schema.sql             PostgreSQL 表、索引与 pg_trgm
+  migrate.js                 数据库迁移
+  scripts/dev-token.js       服务器本地测试 token 生成器
+deploy/                      服务器、PostgreSQL、API 部署脚本
+tests/                       解析器、数据层、云函数账号隔离与安全测试
 scripts/                     图标生成、共享库同步
 ```
 
@@ -172,35 +182,67 @@ module.exports = {
 - 解析规则只保留 PRD 明确要求的常量：微信文章域名、`[链接]/[文件]/[图片]/[小程序]` 等消息标记、`jobTitle` 参数、常见追踪参数。
 - 测试额外覆盖了真实样例之外的场景：多种日期格式、无消息头降级、单条多 URL、伪造微信域名、非法日期、空输入、其他消息标记等。
 
-## 阿里云服务器基线
+## 自建服务器（阿里云）
 
-已在 Ubuntu 24.04 服务器上配置：
+数据库选择 **PostgreSQL 16**：比 SQLite 更适合后续扩展，同时通过 `shared_buffers`、连接池和索引调优，可以在 1.6GB 内存的轻量 ECS 上稳定运行。
 
-- Node.js 20 LTS / npm
-- Nginx 反向代理，监听 80 端口
-- systemd 服务 `linkmemo-api`
-- 2GB swap
-- UFW 已启用，放行 SSH / 80 / 443
+已完成：
 
-当前服务：
+- Ubuntu 24.04 + Node.js 20 LTS + Nginx + systemd
+- PostgreSQL 16，数据库 `linkmemo`，独立用户 `linkmemo`
+- 2GB swap，UFW 放行 SSH / 80 / 443
+- Node API 与 CloudBase 云函数保持相同 action 接口
+- JWT 登录态、用户数据隔离、PostgreSQL 事务与索引
+- 网页元信息抓取复用同一套 SSRF 防护
+- 已用真实服务器和真实 PostgreSQL 完成 API 冒烟测试与双账号隔离测试
+
+当前入口：
 
 - 健康检查：`http://47.95.148.233/health`
-- 应用目录：`/opt/linkmemo`
+- API：`POST http://47.95.148.233/api`
+- 应用目录：`/opt/linkmemo/app`
 - 服务命令：`sudo systemctl status linkmemo-api`
 - 日志：`sudo journalctl -u linkmemo-api -f`
+- 环境变量：`/etc/linkmemo/api.env`（权限 600）
 
-部署脚本：`deploy/setup-server.sh`
+### 部署脚本
 
 ```bash
-scp -i ~/.ssh/id_rsa deploy/setup-server.sh admin@47.95.148.233:/tmp/setup-linkmemo.sh
-ssh -i ~/.ssh/id_rsa admin@47.95.148.233 "bash /tmp/setup-linkmemo.sh"
+# 首次：服务器基础环境
+scp -i ~/.ssh/id_rsa deploy/setup-server.sh admin@47.95.148.233:/tmp/
+ssh -i ~/.ssh/id_rsa admin@47.95.148.233 "bash /tmp/setup-server.sh"
+
+# 首次：PostgreSQL
+scp -i ~/.ssh/id_rsa deploy/setup-postgres.sh admin@47.95.148.233:/tmp/
+ssh -i ~/.ssh/id_rsa admin@47.95.148.233 "bash /tmp/setup-postgres.sh"
+
+# 代码部署/更新
+scp -i ~/.ssh/id_rsa deploy/deploy-api.sh admin@47.95.148.233:/tmp/
+ssh -i ~/.ssh/id_rsa admin@47.95.148.233 "bash /tmp/deploy-api.sh"
 ```
 
-注意：当前 `/opt/linkmemo/server.js` 只是健康检查占位服务，尚未迁移 CloudBase 业务 API。微信小程序生产环境还需要：
+### 切换小程序到自建服务器
 
-- 已备案并可用的 HTTPS 域名（在公众平台配置 request 合法域名）
-- 小程序 AppID / AppSecret，用于服务端换取 openid
-- 数据库选型与业务 API 实现
+修改 `miniprogram/config.js`：
+
+```js
+module.exports = {
+  backendMode: 'http',
+  apiBaseUrl: 'http://47.95.148.233',
+  // ...
+}
+```
+
+默认仍是 `local` 模式。HTTP 直连仅适合开发者工具调试（需勾选“不校验合法域名”）。正式发布前需要：
+
+1. 在 `/etc/linkmemo/api.env` 填写 `WECHAT_APPID`、`WECHAT_SECRET`，然后：
+   ```bash
+   sudo systemctl restart linkmemo-api
+   ```
+2. 准备已备案域名，配置 Nginx HTTPS（Let's Encrypt / 阿里云证书），将 `apiBaseUrl` 改为 HTTPS 域名。
+3. 在微信公众平台「开发管理 → 服务器域名」中配置该 HTTPS request 合法域名。
+
+`server/scripts/dev-token.js` 仅用于服务器本地测试，会直接签发测试 JWT，不通过 HTTP 暴露。
 
 ## 测试
 
@@ -232,7 +274,8 @@ npm install --prefix cloudfunctions/api
 - `no-hardcoding.test.js`：扫描解析器源码，确保没有写入样例标题、URL、发送人等样例特定内容；同时校验前端与云函数解析器副本一致
 - 本地存在 `链接样例.txt` 时会额外解析真实聊天样例（70 条消息，覆盖公众号/网页/文本/文件/图片/小程序）
 - `链接样例.txt` 含个人信息，已加入 `.gitignore`，不随仓库上传
-- GitHub Actions（`.github/workflows/test.yml`）会在每次 push / PR 时安装云函数依赖并运行全部测试
+- 自建服务器已在真实 PostgreSQL 上完成冒烟测试：解析入库、筛选/发送者、分类标签、批量操作、回收站、导出、清空，以及双账号数据隔离
+- GitHub Actions（`.github/workflows/test.yml`）会在每次 push / PR 时检查服务端语法，安装云函数依赖并运行全部测试
 
 修改 `miniprogram/utils` 下的解析/拼音/格式模块后，同步到云函数：
 

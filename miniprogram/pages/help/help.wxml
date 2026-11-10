@@ -68,6 +68,6 @@
       <view class="feedback-email" bindtap="onCopyEmail">反馈邮箱：{{feedbackEmail}}</view>
     </view>
 
-    <view class="help-footer">拾链 v{{version}} · {{cloudEnabled ? '云开发模式' : '本地模式'}}</view>
+    <view class="help-footer">拾链 v{{version}} · {{modeLabel}}</view>
   </view>
 </view>

@@ -109,11 +109,23 @@ Page({
       })
     } catch (e) {
       if (token !== this.parseToken) return
+      const message = e.message || '解析失败，请稍后重试'
       this.setData({
         parsing: false,
-        parseError: e.message || '解析失败，请稍后重试'
+        parseError: message
       })
-      wx.showToast({ title: e.message || '解析失败', icon: 'none' })
+      if (/登录/.test(message)) {
+        wx.showModal({
+          title: '需要登录',
+          content: '请先登录后再解析并归档。',
+          confirmText: '去登录',
+          success: (res) => {
+            if (res.confirm) wx.switchTab({ url: '/pages/mine/mine' })
+          }
+        })
+      } else {
+        wx.showToast({ title: message, icon: 'none' })
+      }
     }
   },
 

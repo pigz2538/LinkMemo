@@ -20,13 +20,8 @@ fi
 log "install server dependencies"
 npm ci --prefix "$APP_DIR/server"
 
-log "load environment"
-set -a
-. /etc/linkmemo/api.env
-set +a
-
 log "run database migration"
-(cd "$APP_DIR/server" && node migrate.js)
+sudo bash -c "set -a; . /etc/linkmemo/api.env; set +a; cd ${APP_DIR}/server; /usr/bin/node migrate.js"
 
 log "install systemd unit"
 sudo tee /etc/systemd/system/linkmemo-api.service >/dev/null <<UNIT

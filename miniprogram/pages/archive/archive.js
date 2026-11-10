@@ -218,6 +218,33 @@ Page({
     const seq = ++this.loadSeq
     this.setData({ loading: true })
     try {
+      const app = getApp()
+      if (app && app.globalData && app.globalData.bootReady) {
+        try {
+          await app.globalData.bootReady
+        } catch (e) {}
+      }
+      const session = await api.getSession()
+      if (seq !== this.loadSeq) return
+      if (!session.loggedIn) {
+        this.setData({
+          loading: false,
+          loggedIn: false,
+          list: [],
+          total: 0,
+          hasMore: false,
+          categories: [],
+          tags: [],
+          senders: [],
+          categoryOptions: [
+            { _id: '', name: '全部分类' },
+            { _id: 'uncategorized', name: '未分类' }
+          ]
+        })
+        this.updateActiveFilterText()
+        return
+      }
+
       const results = await Promise.all([
         api.getCategories(),
         api.getTags(),
@@ -228,6 +255,7 @@ Page({
       const tags = results[1] || []
       const senders = results[2] || []
       this.setData({
+        loggedIn: true,
         categories,
         tags: this.decorateTags(tags),
         senders,

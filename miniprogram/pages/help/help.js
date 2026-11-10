@@ -1,4 +1,13 @@
 const config = require('../../config')
+const { getMode, getModeLabel } = require('../../utils/mode')
+
+const MODE = getMode()
+const MODE_LABEL = getModeLabel()
+const DATA_STORAGE_ANSWER = MODE === 'http'
+  ? '当前为自建服务器模式，数据保存在你的云数据库（PostgreSQL）中，并通过登录令牌按账号隔离。'
+  : MODE === 'cloud'
+    ? '当前为 CloudBase 模式，数据保存在你的 CloudBase 环境中，并按微信用户 openid 隔离。'
+    : '当前为本地模式，数据保存在当前设备的微信本地 Storage 中。'
 
 const FAQS = [
   {
@@ -27,16 +36,14 @@ const FAQS = [
   },
   {
     q: '我的数据存在哪里？',
-    a: config.cloudEnabled
-      ? '当前为云开发模式，数据保存在你的 CloudBase 环境中，并按微信用户 openid 隔离。'
-      : '当前为本地模式，数据保存在当前设备的微信本地 Storage 中。配置云开发后可切换为云端存储。'
+    a: DATA_STORAGE_ANSWER
   }
 ]
 
 Page({
   data: {
     version: config.version,
-    cloudEnabled: config.cloudEnabled,
+    modeLabel: MODE_LABEL,
     feedbackEmail: config.feedbackEmail,
     faqs: FAQS.map((item, index) => Object.assign({}, item, { open: index === 0 })),
     steps: [
@@ -103,7 +110,7 @@ Page({
 
   onCopyFeedback() {
     const text = '拾链问题反馈\n小程序版本：v' + this.data.version +
-      '\n运行模式：' + (this.data.cloudEnabled ? '云开发' : '本地') +
+      '\n运行模式：' + this.data.modeLabel +
       '\n问题描述：\n复现步骤：\n补充截图或说明：'
     wx.setClipboardData({
       data: text,
