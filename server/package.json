@@ -1,0 +1,19 @@
+{
+  "name": "linkmemo-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LinkMemo self-hosted API (PostgreSQL)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "migrate": "node migrate.js",
+    "dev-token": "node scripts/dev-token.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  }
+}
