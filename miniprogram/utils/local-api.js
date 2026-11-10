@@ -4,6 +4,7 @@ const format = require('./format')
 
 const DB_KEY = 'linkmemo_db_v2'
 const DB_VERSION = 2
+const SESSION_VERSION = 2
 const VALID_TYPES = ['wechat', 'web', 'text', 'mini', 'file', 'image', 'other']
 let memoryDb = null
 
@@ -19,7 +20,8 @@ function createEmptyDb() {
   const now = Date.now()
   return {
     version: DB_VERSION,
-    loggedIn: true,
+    session_version: SESSION_VERSION,
+    loggedIn: false,
     user: {
       _id: 'u_local',
       openid_masked: 'o****local',
@@ -52,8 +54,12 @@ function loadDb() {
   if (!db || db.version !== DB_VERSION) {
     db = createEmptyDb()
     saveDb(db)
+  } else if (db.session_version !== SESSION_VERSION) {
+    db.session_version = SESSION_VERSION
+    db.loggedIn = false
+    saveDb(db)
   }
-  if (typeof db.loggedIn !== 'boolean') db.loggedIn = true
+  if (typeof db.loggedIn !== 'boolean') db.loggedIn = false
   memoryDb = db
   return db
 }

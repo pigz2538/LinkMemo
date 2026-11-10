@@ -77,7 +77,7 @@ async function run() {
 
   const init = await api.init()
   assert.ok(init.user)
-  assert.strictEqual(init.loggedIn, true)
+  assert.strictEqual(init.loggedIn, false)
   assert.strictEqual(init.user.display_name, '微信用户')
 
   const emptyStats = await api.getProfileStats()
@@ -90,7 +90,10 @@ async function run() {
   assert.deepStrictEqual(await api.getCategories(), [])
   assert.deepStrictEqual(await api.getTags(), [])
   assert.deepStrictEqual(await api.getSenders(), [])
-  console.log('  ok  fresh install starts completely empty')
+  console.log('  ok  fresh install starts completely empty and logged out')
+
+  await api.login()
+  assert.strictEqual((await api.getSession()).loggedIn, true)
 
   const fixture = buildChatFixture()
   const parsed = await api.parseAndSave(fixture.raw)

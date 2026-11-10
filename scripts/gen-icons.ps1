@@ -1,4 +1,4 @@
-﻿Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName System.Drawing
 
 $root = Join-Path $PSScriptRoot "..\miniprogram\assets"
 $iconDir = Join-Path $root "icons"
@@ -38,6 +38,7 @@ function Get-Color([string]$name) {
     "light"  { return [System.Drawing.ColorTranslator]::FromHtml("#C9D2CC") }
     "white"  { return [System.Drawing.Color]::White }
     "red"    { return [System.Drawing.ColorTranslator]::FromHtml("#DA5A5A") }
+    "amber"  { return [System.Drawing.ColorTranslator]::FromHtml("#C98124") }
     default  { return [System.Drawing.ColorTranslator]::FromHtml($name) }
   }
 }
@@ -93,6 +94,7 @@ $icons = @{
   "arrow-right"  = 0xEA6C
   download       = 0xEC54
   sparkles       = 0xF36B
+  warning        = 0xECA1
 }
 
 $colors = @{
@@ -132,6 +134,7 @@ $colors = @{
   "arrow-right" = @("gray")
   download = @("dark")
   sparkles = @("white", "green")
+  warning = @("amber", "dark", "white")
 }
 
 foreach ($name in $icons.Keys) {

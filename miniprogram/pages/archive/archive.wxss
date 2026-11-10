@@ -48,7 +48,9 @@
 
 .sync-tip {
   margin-top: 18rpx;
-  background: #F0F9F4;
+  background: #FFF7E6;
+  border: 1rpx solid #F2D08A;
+  border-left: 6rpx solid #E0A54C;
   border-radius: 18rpx;
   padding: 14rpx 18rpx;
   display: flex;
@@ -57,8 +59,8 @@
 }
 
 .sync-tip-icon {
-  width: 32rpx;
-  height: 32rpx;
+  width: 34rpx;
+  height: 34rpx;
   flex-shrink: 0;
 }
 
@@ -67,15 +69,17 @@
   min-width: 0;
   font-size: 25rpx;
   line-height: 1.5;
-  color: #4C6B58;
+  color: #8A5A1F;
 }
 
 .sync-tip-action {
   flex-shrink: 0;
-  padding-left: 8rpx;
-  font-size: 25rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  background: #FBE6B0;
+  font-size: 24rpx;
   font-weight: 600;
-  color: #2E9E5B;
+  color: #A86812;
 }
 
 .search-box {

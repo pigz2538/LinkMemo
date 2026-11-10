@@ -135,21 +135,19 @@ Page({
       }
       const session = await api.getSession()
       const loggedIn = !!session.loggedIn
-      let syncTip = '登录后可在云端保存并同步账号信息'
-      if (!config.cloudEnabled) {
-        syncTip = '当前为本地保存；登录后可云端同步账号信息'
-      } else if (loggedIn) {
-        syncTip = '账号信息已云端保存并同步'
+      if (loggedIn) {
+        this.setData({ loggedIn: true, showSyncLogin: false, syncTip: '' })
+        return
       }
       this.setData({
-        loggedIn,
-        showSyncLogin: config.cloudEnabled && !loggedIn,
-        syncTip
+        loggedIn: false,
+        showSyncLogin: true,
+        syncTip: '登录后可在云端保存并同步账号信息'
       })
     } catch (e) {
       this.setData({
         loggedIn: false,
-        showSyncLogin: config.cloudEnabled,
+        showSyncLogin: true,
         syncTip: '登录后可在云端保存并同步账号信息'
       })
     }
