@@ -129,6 +129,10 @@ const cloudApi = {
     return call('getTags')
   },
 
+  getSenders() {
+    return call('getSenders')
+  },
+
   manageCategory(payload) {
     return call('manageCategory', payload)
   },
@@ -147,10 +151,6 @@ const cloudApi = {
 
   clearUserData() {
     return call('clearUserData')
-  },
-
-  async resetDemoData() {
-    throw new Error('云端模式不支持重置演示数据')
   }
 }
 

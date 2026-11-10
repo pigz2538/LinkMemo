@@ -8,7 +8,7 @@
 }
 
 .help-hero-title {
-  font-size: 48rpx;
+  font-size: 55rpx;
   font-weight: 700;
   color: #17221C;
   letter-spacing: 1rpx;
@@ -16,7 +16,7 @@
 
 .help-hero-sub {
   margin-top: 10rpx;
-  font-size: 25rpx;
+  font-size: 29rpx;
   color: #8A948D;
 }
 
@@ -43,7 +43,7 @@
   border-radius: 50%;
   background: #E9F6EE;
   color: #2E9E5B;
-  font-size: 26rpx;
+  font-size: 30rpx;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -57,14 +57,14 @@
 }
 
 .help-step-title {
-  font-size: 29rpx;
+  font-size: 33rpx;
   font-weight: 600;
   color: #1F2A24;
 }
 
 .help-step-desc {
   margin-top: 6rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
   line-height: 1.6;
   color: #8A948D;
 }
@@ -83,7 +83,7 @@
 }
 
 .section-head-title {
-  font-size: 34rpx;
+  font-size: 39rpx;
   font-weight: 700;
   color: #1B2620;
 }
@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   gap: 6rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #2E9E5B;
 }
 
@@ -108,14 +108,14 @@
 }
 
 .example-type {
-  font-size: 22rpx;
+  font-size: 25rpx;
   font-weight: 600;
   color: #2E9E5B;
   margin-bottom: 8rpx;
 }
 
 .example-sample {
-  font-size: 24rpx;
+  font-size: 28rpx;
   line-height: 1.6;
   color: #526058;
   word-break: break-all;
@@ -132,7 +132,7 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: #8A5A1F;
   margin-bottom: 12rpx;
@@ -148,7 +148,7 @@
   align-items: flex-start;
   gap: 10rpx;
   padding: 8rpx 0;
-  font-size: 23rpx;
+  font-size: 26rpx;
   line-height: 1.65;
   color: #8A6A45;
 }
@@ -187,7 +187,7 @@
 
 .faq-q-text {
   flex: 1;
-  font-size: 27rpx;
+  font-size: 31rpx;
   font-weight: 500;
   color: #26332B;
   line-height: 1.5;
@@ -209,7 +209,7 @@
   padding: 18rpx 20rpx;
   background: #F6FAF7;
   border-radius: 14rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   line-height: 1.75;
   color: #5A6860;
 }
@@ -220,14 +220,14 @@
 }
 
 .feedback-title {
-  font-size: 30rpx;
+  font-size: 34rpx;
   font-weight: 600;
   color: #1F2A24;
 }
 
 .feedback-desc {
   margin-top: 8rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #8A948D;
 }
 
@@ -240,19 +240,19 @@
 .feedback-btn {
   flex: 1;
   height: 80rpx;
-  font-size: 26rpx;
+  font-size: 30rpx;
 }
 
 .feedback-email {
   margin-top: 18rpx;
   text-align: center;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
 .help-footer {
   margin-top: 34rpx;
   text-align: center;
-  font-size: 21rpx;
+  font-size: 24rpx;
   color: #A5AEA8;
 }

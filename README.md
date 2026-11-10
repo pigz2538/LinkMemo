@@ -41,7 +41,7 @@
 - 内容类型筛选
 - 时间正反序、标题拼音 A-Z / Z-A
 - 日期：今天、近 7 天、近 30 天、自定义范围
-- 自定义分类、标签组合筛选；多标签支持「同时满足 / 任一满足」
+- 自定义分类、标签、发送者组合筛选；多标签支持「同时满足 / 任一满足」
 - 首屏 20 条，滚动加载更多，筛选变化重置分页
 - 多选批量删除、批量分类、批量添加/移除标签
 - 长按卡片进入多选
@@ -68,7 +68,6 @@
 - 默认排序设置
 - 隐私说明入口
 - 数据导出（JSON 复制到剪贴板）、回收站、清空回收站、删除账号数据
-- 本地模式可重置演示数据
 - 帮助：三步教程、可识别示例、限制说明、7 条 FAQ、复制反馈模板
 - 退出登录
 
@@ -83,7 +82,7 @@ miniprogram/                 微信原生小程序
   utils/
     parser.js                解析引擎（前端与云函数共用）
     pinyin*.js               中文首字母
-    local-api.js             本地 Storage 数据层（含演示种子）
+    local-api.js             本地 Storage 数据层（首次启动为空库）
     cloud-api.js             CloudBase 调用封装
     api.js                   模式切换
     format.js                类型元信息与展示装饰
@@ -108,7 +107,7 @@ module.exports = {
 }
 ```
 
-数据保存在微信本地 Storage（`linkmemo_db_v1`），首次启动会写入演示归档、分类和标签，便于直接预览。
+数据保存在微信本地 Storage（`linkmemo_db_v2`）。首次启动为空库，不包含任何演示归档、分类或标签；旧版 `linkmemo_db_v1` 的演示数据不会被读取。
 
 ### 云开发模式
 
@@ -146,7 +145,7 @@ module.exports = {
 
 ### 云函数接口（action）
 
-`login`、`parseAndSave`、`enrichArchive`、`getArchiveList`、`getArchiveDetail`、`updateArchive`、`batchUpdateArchive`、`batchTag`、`deleteArchive`、`restoreArchive`、`emptyRecycleBin`、`getCategories`、`getTags`、`manageCategory`、`manageTag`、`getProfileStats`、`exportData`、`clearUserData`。
+`login`、`parseAndSave`、`enrichArchive`、`getArchiveList`、`getArchiveDetail`、`updateArchive`、`batchUpdateArchive`、`batchTag`、`deleteArchive`、`restoreArchive`、`emptyRecycleBin`、`getCategories`、`getTags`、`getSenders`、`manageCategory`、`manageTag`、`getProfileStats`、`exportData`、`clearUserData`。
 
 `parseAndSave` 先完成归档落库并返回 `pending_enrich_ids`，前端随后异步调用 `enrichArchive` 抓取网页元信息，抓取失败或超时不影响已保存内容。
 
@@ -168,7 +167,7 @@ module.exports = {
 ### 解析器是否过拟合样例
 
 - 解析器源码不包含样例标题、URL、发送人等样例特定内容；`tests/no-hardcoding.test.js` 会扫描源码并阻止这类回归。
-- 样例数据只存在于 `miniprogram/utils/seed.js`，仅用于本地模式演示，与解析规则完全分离。
+- 运行时不含任何演示数据；测试使用的消息 fixture 只在 `tests/` 中生成，不会进入小程序包或云函数。
 - 解析规则只保留 PRD 明确要求的常量：微信文章域名、`[链接]/[文件]/[图片]/[小程序]` 等消息标记、`jobTitle` 参数、常见追踪参数。
 - 测试额外覆盖了真实样例之外的场景：多种日期格式、无消息头降级、单条多 URL、伪造微信域名、非法日期、空输入、其他消息标记等。
 
@@ -197,8 +196,8 @@ npm install --prefix cloudfunctions/api
 
 - 解析器 22 组测试：消息拆分、各种日期格式、无消息头降级拆分、多 URL、URL 标点与成对括号、公众号精确域名、`jobTitle`、文本/文件/图片/小程序/聊天记录线索、去重规范化、拼音首字母、空输入、非法日期
 - 模糊测试：1200 组随机混合消息（不同发送人、日期、URL、标记、多行文本、emoji、超长文本）不抛异常，字段类型与内容类型始终合法；500 组 URL 规范化/域名提取稳定性检查
-- 本地数据层：登录/退出会话、分页、搜索/类型/分类/标签 AND-OR/日期筛选、时间与标题排序、分类标签 CRUD 与大小写唯一性、URL 类型纠正、去重与允许重复、回收站、批量操作、导出、清空/重置
-- 云函数账号隔离测试：用内存数据库 Mock 两个及三个不同 `OPENID`，验证登录不泄露 openid、跨账号读取/修改/删除/批量操作被拒绝、每用户独立去重、分类标签隔离、统计与导出只含本人、账号数据删除只影响本人、元信息抓取失败兜底
+- 本地数据层：空库启动、登录/退出会话、分页、搜索/类型/分类/标签 AND-OR/发送者/日期筛选、时间与标题排序、分类标签 CRUD 与大小写唯一性、URL 类型纠正、去重与允许重复、回收站、批量操作、导出、清空
+- 云函数账号隔离测试：用内存数据库 Mock 两个及三个不同 `OPENID`，验证登录不泄露 openid、跨账号读取/修改/删除/批量操作被拒绝、每用户独立去重、分类/标签/发送者隔离、统计与导出只含本人、账号数据删除只影响本人、元信息抓取失败兜底
 - `no-hardcoding.test.js`：扫描解析器源码，确保没有写入样例标题、URL、发送人等样例特定内容；同时校验前端与云函数解析器副本一致
 - 本地存在 `链接样例.txt` 时会额外解析真实聊天样例（70 条消息，覆盖公众号/网页/文本/文件/图片/小程序）
 - `链接样例.txt` 含个人信息，已加入 `.gitignore`，不随仓库上传
@@ -221,7 +220,7 @@ npm run sync:cloud
 | AC-05 | 文本与线索 | 文本、文件、图片、小程序线索均可保存 |
 | AC-06 | 编辑删除 | 编辑标题/链接/分类/标签；软删除进入回收站 |
 | AC-07 | 分类标签 | 新建、重命名、改色、删除；删除分类不删记录 |
-| AC-08 | 搜索筛选 | 关键词 + 类型 + 分类/标签 + 日期组合 |
+| AC-08 | 搜索筛选 | 关键词 + 类型 + 分类/标签 + 发送者 + 日期组合 |
 | AC-09 | 排序 | 时间正反序、标题拼音 A-Z / Z-A |
 | AC-10 | 帮助 | 教程、示例、限制、FAQ、反馈模板 |
 

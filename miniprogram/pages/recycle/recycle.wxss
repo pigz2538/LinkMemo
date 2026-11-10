@@ -12,7 +12,7 @@
 
 .page-desc {
   margin-top: 10rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   line-height: 1.6;
   color: #8A948D;
   max-width: 500rpx;
@@ -24,7 +24,7 @@
   border-radius: 31rpx;
   background: #FCEFEF;
   color: #DA5A5A;
-  font-size: 24rpx;
+  font-size: 28rpx;
   display: flex;
   align-items: center;
   gap: 6rpx;
@@ -38,7 +38,7 @@
 
 .recycle-count {
   margin: 28rpx 4rpx 16rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #9AA39D;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .recycle-title {
-  font-size: 28rpx;
+  font-size: 32rpx;
   line-height: 1.45;
   font-weight: 600;
   color: #1B2620;
@@ -72,7 +72,7 @@
 
 .recycle-meta {
   margin-top: 8rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
@@ -89,7 +89,7 @@
   display: flex;
   align-items: center;
   gap: 6rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
 }
 
 .recycle-action.restore {
@@ -109,7 +109,7 @@
   align-items: center;
   gap: 22rpx;
   color: #8A948D;
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 .loading-spinner {

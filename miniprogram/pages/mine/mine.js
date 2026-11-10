@@ -251,28 +251,6 @@ Page({
     }
   },
 
-  async onResetDemo() {
-    this.setData({ showDataSheet: false })
-    this.syncTabBar()
-    const confirm = await new Promise((resolve) => {
-      wx.showModal({
-        title: '重置演示数据',
-        content: '将恢复示例归档、分类和标签，当前本地数据会被覆盖。',
-        confirmText: '重置',
-        success: (res) => resolve(res.confirm),
-        fail: () => resolve(false)
-      })
-    })
-    if (!confirm) return
-    try {
-      await api.resetDemoData()
-      wx.showToast({ title: '已重置演示数据', icon: 'success' })
-      this.load()
-    } catch (e) {
-      wx.showToast({ title: e.message || '操作失败', icon: 'none' })
-    }
-  },
-
   async onDeleteAccountData() {
     this.setData({ showDataSheet: false })
     this.syncTabBar()

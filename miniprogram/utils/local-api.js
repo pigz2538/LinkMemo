@@ -1,9 +1,9 @@
 const config = require('../config')
 const parser = require('./parser')
 const format = require('./format')
-const { buildSeed } = require('./seed')
 
-const DB_KEY = 'linkmemo_db_v1'
+const DB_KEY = 'linkmemo_db_v2'
+const DB_VERSION = 2
 const VALID_TYPES = ['wechat', 'web', 'text', 'mini', 'file', 'image', 'other']
 let memoryDb = null
 
@@ -15,17 +15,42 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
+function createEmptyDb() {
+  const now = Date.now()
+  return {
+    version: DB_VERSION,
+    loggedIn: true,
+    user: {
+      _id: 'u_local',
+      openid_masked: 'o****local',
+      display_name: '微信用户',
+      avatar_url: '/assets/images/avatar-bear.png',
+      login_type: '微信登录',
+      plan: '个人版',
+      created_at: now,
+      last_login_at: now,
+      status: 'active'
+    },
+    categories: [],
+    tags: [],
+    items: [],
+    batches: []
+  }
+}
+
 function loadDb() {
   if (memoryDb) return memoryDb
+  try {
+    if (wx.removeStorageSync) wx.removeStorageSync('linkmemo_db_v1')
+  } catch (e) {}
   let db = null
   try {
     db = wx.getStorageSync(DB_KEY)
   } catch (e) {
     db = null
   }
-  if (!db || db.version !== 1) {
-    db = buildSeed(Date.now())
-    db.loggedIn = true
+  if (!db || db.version !== DB_VERSION) {
+    db = createEmptyDb()
     saveDb(db)
   }
   if (typeof db.loggedIn !== 'boolean') db.loggedIn = true
@@ -102,6 +127,7 @@ function filterItems(db, params) {
   const categoryId = p.category_id || ''
   const tagIds = Array.isArray(p.tag_ids) ? p.tag_ids.filter(Boolean) : []
   const tagMatch = p.tag_match === 'or' ? 'or' : 'and'
+  const sender = String(p.sender || '').trim()
   const dateFrom = p.date_from ? format.startOfDay(p.date_from) : null
   const dateTo = p.date_to ? format.endOfDay(p.date_to) : null
 
@@ -112,6 +138,7 @@ function filterItems(db, params) {
       return false
     }
     if (contentType !== 'all' && item.content_type !== contentType) return false
+    if (sender && String(item.source_sender || '').trim() !== sender) return false
     if (categoryId === 'uncategorized') {
       if (item.category_id) return false
     } else if (categoryId && item.category_id !== categoryId) {
@@ -341,7 +368,7 @@ const localApi = {
     }
     if (!item.url) {
       item.dedupe_key = 't:' + parser.hashString(
-        item.content_type + '|' + item.title + '|' + (item.content || item.source_text || '')
+        item.content_type + '|' + (item.source_text || item.content || '')
       )
     }
     item.updated_at = Date.now()
@@ -445,6 +472,18 @@ const localApi = {
     return clone(db.tags)
       .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)))
       .map((item) => Object.assign({}, item, { usage_count: tagUsage(db, item._id) }))
+  },
+
+  async getSenders() {
+    const db = loadDb()
+    const counts = {}
+    activeItems(db).forEach((item) => {
+      const name = String(item.source_sender || '').trim()
+      if (name) counts[name] = (counts[name] || 0) + 1
+    })
+    return Object.keys(counts)
+      .map((name) => ({ name, count: counts[name] }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
   },
 
   async manageCategory(payload) {
@@ -585,13 +624,6 @@ const localApi = {
     db.batches = []
     saveDb(db)
     return { cleared: true }
-  },
-
-  async resetDemoData() {
-    const db = buildSeed(Date.now())
-    db.loggedIn = true
-    saveDb(db)
-    return { reset: true }
   }
 }
 

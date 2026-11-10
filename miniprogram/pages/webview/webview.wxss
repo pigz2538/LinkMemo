@@ -4,5 +4,5 @@
   align-items: center;
   justify-content: center;
   color: #8A948D;
-  font-size: 28rpx;
+  font-size: 32rpx;
 }

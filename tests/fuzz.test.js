@@ -1,10 +1,10 @@
 const assert = require('assert')
 const parser = require('../miniprogram/utils/parser')
 
-let seed = 20261109
+let randomState = 20261109
 function random() {
-  seed = (seed * 1664525 + 1013904223) >>> 0
-  return seed / 4294967296
+  randomState = (randomState * 1664525 + 1013904223) >>> 0
+  return randomState / 4294967296
 }
 
 function pick(list) {

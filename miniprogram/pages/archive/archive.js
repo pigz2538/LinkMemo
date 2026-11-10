@@ -65,13 +65,16 @@ Page({
 
     categories: [],
     tags: [],
+    senders: [],
     categoryOptions: [],
     filterCategoryId: '',
     filterTagIds: [],
     filterTagMatch: config.tagMatchMode || 'and',
+    filterSender: '',
     draftCategoryId: '',
     draftTagIds: [],
     draftTagMatch: 'and',
+    draftSender: '',
     showFilterSheet: false,
 
     list: [],
@@ -155,6 +158,7 @@ Page({
     const patch = {}
     if (pending.category_id !== undefined) patch.filterCategoryId = pending.category_id || ''
     if (pending.tag_ids !== undefined) patch.filterTagIds = pending.tag_ids || []
+    if (pending.sender !== undefined) patch.filterSender = pending.sender || ''
     if (pending.content_type !== undefined) patch.contentType = pending.content_type || 'all'
     if (pending.keyword !== undefined) patch.keyword = pending.keyword || ''
     if (pending.date_preset !== undefined) {
@@ -170,13 +174,19 @@ Page({
     const seq = ++this.loadSeq
     this.setData({ loading: true })
     try {
-      const results = await Promise.all([api.getCategories(), api.getTags()])
+      const results = await Promise.all([
+        api.getCategories(),
+        api.getTags(),
+        api.getSenders ? api.getSenders().catch(() => []) : Promise.resolve([])
+      ])
       if (seq !== this.loadSeq) return
       const categories = results[0] || []
       const tags = results[1] || []
+      const senders = results[2] || []
       this.setData({
         categories,
         tags: this.decorateTags(tags),
+        senders,
         categoryOptions: [
           { _id: '', name: '全部分类' },
           { _id: 'uncategorized', name: '未分类' }
@@ -205,6 +215,7 @@ Page({
       category_id: this.data.filterCategoryId,
       tag_ids: this.data.filterTagIds,
       tag_match: this.data.filterTagMatch,
+      sender: this.data.filterSender,
       date_from: this.data.dateFrom,
       date_to: this.data.dateTo,
       sort: this.data.sort,
@@ -244,6 +255,7 @@ Page({
       const category = this.data.categories.find((item) => item._id === this.data.filterCategoryId)
       parts.push(category ? category.name : '未分类')
     }
+    if (this.data.filterSender) parts.push('发送者：' + this.data.filterSender)
     if (this.data.filterTagIds.length) {
       const names = this.data.filterTagIds.map((id) => {
         const tag = this.data.tags.find((item) => item._id === id)
@@ -408,6 +420,7 @@ Page({
       filterCategoryId: '',
       filterTagIds: [],
       filterTagMatch: 'and',
+      filterSender: '',
       tags: this.decorateTags(this.data.tags),
       datePreset: 'all',
       dateFrom: null,
@@ -425,6 +438,7 @@ Page({
       draftCategoryId: this.data.filterCategoryId,
       draftTagIds: this.data.filterTagIds.slice(),
       draftTagMatch: this.data.filterTagMatch,
+      draftSender: this.data.filterSender,
       tags: this.data.tags.map((tag) => Object.assign({}, tag, {
         checked: this.data.filterTagIds.indexOf(tag._id) !== -1
       }))
@@ -455,6 +469,10 @@ Page({
      })
   },
 
+  onDraftSenderTap(e) {
+    this.setData({ draftSender: e.currentTarget.dataset.name || '' })
+  },
+
   onDraftTagMatchTap(e) {
     this.setData({ draftTagMatch: e.currentTarget.dataset.mode })
   },
@@ -464,6 +482,7 @@ Page({
       draftCategoryId: '',
       draftTagIds: [],
       draftTagMatch: 'and',
+      draftSender: '',
       tags: this.data.tags.map((tag) => Object.assign({}, tag, { checked: false }))
     })
   },
@@ -474,6 +493,7 @@ Page({
       filterCategoryId: this.data.draftCategoryId,
       filterTagIds: tagIds,
       filterTagMatch: this.data.draftTagMatch,
+      filterSender: this.data.draftSender,
       tags: this.data.tags.map((tag) => Object.assign({}, tag, {
         checked: tagIds.indexOf(tag._id) !== -1
       })),
@@ -583,7 +603,7 @@ Page({
   },
 
   onEmptyAction() {
-    if (this.data.hasActiveFilter || this.data.keyword || this.data.contentType !== 'all') {
+    if (this.data.hasActiveFilter || this.data.keyword || this.data.contentType !== 'all' || this.data.filterSender) {
       this.onClearFilters()
       return
     }

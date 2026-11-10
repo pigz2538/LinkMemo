@@ -53,7 +53,7 @@
       <view class="steps">
         <view class="step">
           <view class="step-num">1</view>
-          <text class="step-text">复制聊天内容</text>
+          <text class="step-text">多选复制聊天内容</text>
         </view>
         <image class="step-arrow" src="/assets/icons/arrow-right-gray.png" mode="aspectFit" />
         <view class="step">

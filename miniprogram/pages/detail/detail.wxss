@@ -26,19 +26,19 @@
 }
 
 .detail-type {
-  font-size: 26rpx;
+  font-size: 30rpx;
   font-weight: 600;
   color: #2E9E5B;
 }
 
 .detail-date {
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
 .detail-title {
   margin-top: 24rpx;
-  font-size: 44rpx;
+  font-size: 51rpx;
   line-height: 1.38;
   font-weight: 700;
   color: #17221C;
@@ -63,7 +63,7 @@
 .domain-text {
   flex: 1;
   min-width: 0;
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #6F7C73;
   overflow: hidden;
   white-space: nowrap;
@@ -83,7 +83,7 @@
 }
 
 .block-label {
-  font-size: 23rpx;
+  font-size: 26rpx;
   font-weight: 600;
   color: #2E9E5B;
   letter-spacing: 1rpx;
@@ -91,7 +91,7 @@
 }
 
 .summary-text {
-  font-size: 27rpx;
+  font-size: 31rpx;
   line-height: 1.65;
   color: #40544A;
 }
@@ -116,7 +116,7 @@
 .organize-label {
   width: 74rpx;
   flex-shrink: 0;
-  font-size: 25rpx;
+  font-size: 29rpx;
   color: #8A948D;
   line-height: 44rpx;
 }
@@ -132,7 +132,7 @@
 .category-pill {
   height: 44rpx;
   gap: 8rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
 }
 
 .category-pill .color-dot {
@@ -149,7 +149,7 @@
   border-radius: 22rpx;
   background: #F3F6F4;
   color: #4B5951;
-  font-size: 23rpx;
+  font-size: 26rpx;
   margin: 0;
 }
 
@@ -164,13 +164,13 @@
 }
 
 .url-label {
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #8A948D;
 }
 
 .url-text {
   margin-top: 10rpx;
-  font-size: 25rpx;
+  font-size: 29rpx;
   line-height: 1.55;
   color: #4C8DFF;
   word-break: break-all;
@@ -186,7 +186,7 @@
   border-radius: 28rpx;
   background: #EAF6EE;
   color: #257E4B;
-  font-size: 23rpx;
+  font-size: 26rpx;
 }
 
 .content-card,
@@ -197,7 +197,7 @@
 }
 
 .content-text {
-  font-size: 28rpx;
+  font-size: 32rpx;
   line-height: 1.78;
   color: #2A3830;
   white-space: pre-wrap;
@@ -209,7 +209,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 0;
-  font-size: 25rpx;
+  font-size: 29rpx;
 }
 
 .meta-label {
@@ -230,7 +230,7 @@
 
 .source-toggle-text {
   color: #2E9E5B;
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 .source-box {
@@ -238,7 +238,7 @@
   background: #F7FAF8;
   border-radius: 16rpx;
   padding: 20rpx;
-  font-size: 25rpx;
+  font-size: 29rpx;
   line-height: 1.7;
   color: #526058;
   white-space: pre-wrap;
@@ -259,7 +259,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #4B5951;
 }
 
@@ -283,7 +283,7 @@
   align-items: center;
   gap: 22rpx;
   color: #8A948D;
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 .loading-spinner {

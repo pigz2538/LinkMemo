@@ -107,10 +107,10 @@
 
     <empty-state
       wx:else
-      title="{{(hasActiveFilter || keyword || contentType != 'all') ? '没有找到匹配内容' : '还没有收藏内容'}}"
-      desc="{{(hasActiveFilter || keyword || contentType != 'all') ? '试试更换关键词，或清除部分筛选条件' : '把微信聊天里的链接和文字粘贴到收集页，解析后会出现在这里'}}"
+      title="{{(hasActiveFilter || keyword || contentType != 'all' || filterSender) ? '没有找到匹配内容' : '还没有收藏内容'}}"
+      desc="{{(hasActiveFilter || keyword || contentType != 'all' || filterSender) ? '试试更换关键词，或清除部分筛选条件' : '把微信聊天里的链接和文字粘贴到收集页，解析后会出现在这里'}}"
       icon="/assets/icons/folder-gray.png"
-      action-text="{{(hasActiveFilter || keyword || contentType != 'all') ? '清除筛选' : '去收集'}}"
+      action-text="{{(hasActiveFilter || keyword || contentType != 'all' || filterSender) ? '清除筛选' : '去收集'}}"
       bind:action="onEmptyAction"
     />
 
@@ -210,6 +210,22 @@
           data-id="{{item._id}}"
           bindtap="onDraftCategoryTap"
         >{{item.name}}</view>
+      </view>
+
+      <view class="filter-section-title">发送者</view>
+      <view class="sender-select-wrap">
+        <view class="sender-select {{draftSender == '' ? 'on' : ''}}" data-name="" bindtap="onDraftSenderTap">全部发送者</view>
+        <view
+          wx:for="{{senders}}"
+          wx:key="name"
+          class="sender-select {{draftSender == item.name ? 'on' : ''}}"
+          data-name="{{item.name}}"
+          bindtap="onDraftSenderTap"
+        >
+          <text class="sender-name ellipsis-1">{{item.name}}</text>
+          <text class="sender-count">{{item.count}}</text>
+        </view>
+        <view wx:if="{{!senders.length}}" class="filter-empty">导入内容后可筛选发送者</view>
       </view>
 
       <view class="filter-section-title">标签（可多选）</view>

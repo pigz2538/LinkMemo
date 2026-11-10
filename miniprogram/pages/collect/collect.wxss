@@ -28,7 +28,7 @@
 
 .hero-title {
   margin-top: 24rpx;
-  font-size: 68rpx;
+  font-size: 78rpx;
   font-weight: 800;
   letter-spacing: 8rpx;
   color: #0F1A13;
@@ -36,7 +36,7 @@
 
 .hero-sub {
   margin-top: 14rpx;
-  font-size: 28rpx;
+  font-size: 32rpx;
   color: #68756D;
   letter-spacing: 1rpx;
 }
@@ -58,21 +58,21 @@
 .paste-input {
   width: 100%;
   height: 360rpx;
-  font-size: 30rpx;
+  font-size: 34rpx;
   line-height: 1.7;
   color: #223028;
 }
 
 .paste-placeholder {
   color: #A5AEA8;
-  font-size: 30rpx;
+  font-size: 34rpx;
 }
 
 .paste-counter {
   position: absolute;
   right: 30rpx;
   bottom: 20rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #A5AEA8;
 }
 
@@ -85,14 +85,14 @@
 .clipboard-btn {
   flex: 1;
   height: 96rpx;
-  font-size: 29rpx;
+  font-size: 33rpx;
   gap: 12rpx;
 }
 
 .parse-btn {
   flex: 1.12;
   height: 96rpx;
-  font-size: 30rpx;
+  font-size: 34rpx;
   gap: 12rpx;
 }
 
@@ -113,12 +113,12 @@
   display: flex;
   flex-direction: column;
   gap: 4rpx;
-  font-size: 25rpx;
+  font-size: 29rpx;
   color: #4B5951;
 }
 
 .dup-sub {
-  font-size: 21rpx;
+  font-size: 24rpx;
   color: #9AA39D;
 }
 
@@ -129,7 +129,7 @@
 }
 
 .dup-state {
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #2E9E5B;
 }
 
@@ -184,7 +184,7 @@
   border-radius: 50%;
   background: #E9F6EE;
   color: #2E9E5B;
-  font-size: 22rpx;
+  font-size: 25rpx;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -192,7 +192,7 @@
 }
 
 .step-text {
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #526058;
   white-space: nowrap;
 }
@@ -206,7 +206,7 @@
 .usage-note {
   margin-top: 26rpx;
   text-align: center;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
@@ -245,21 +245,21 @@
 
 .parsing-title {
   margin-top: 26rpx;
-  font-size: 32rpx;
+  font-size: 37rpx;
   font-weight: 600;
   color: #1F2A24;
 }
 
 .parsing-desc {
   margin-top: 12rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #8A948D;
   text-align: center;
 }
 
 .parsing-cancel {
   margin-top: 28rpx;
-  font-size: 26rpx;
+  font-size: 30rpx;
   color: #7C8781;
   padding: 16rpx 40rpx;
 }
@@ -292,14 +292,14 @@
 
 .result-title {
   margin-top: 18rpx;
-  font-size: 36rpx;
+  font-size: 41rpx;
   font-weight: 700;
   color: #1B2620;
 }
 
 .result-sub {
   margin-top: 8rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #8A948D;
 }
 
@@ -320,7 +320,7 @@
 }
 
 .stat-num {
-  font-size: 40rpx;
+  font-size: 46rpx;
   font-weight: 700;
 }
 
@@ -337,7 +337,7 @@
 }
 
 .stat-label {
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #8A948D;
 }
 
@@ -372,14 +372,14 @@
 }
 
 .result-item-title {
-  font-size: 27rpx;
+  font-size: 31rpx;
   color: #223028;
   font-weight: 500;
 }
 
 .result-item-meta {
   margin-top: 6rpx;
-  font-size: 21rpx;
+  font-size: 24rpx;
   color: #9AA39D;
 }
 
@@ -389,7 +389,7 @@
 
 .result-dup-head {
   margin: 24rpx 4rpx 10rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #9AA39D;
 }
 
@@ -402,13 +402,13 @@
 .result-btn {
   flex: 1;
   height: 88rpx;
-  font-size: 29rpx;
+  font-size: 33rpx;
 }
 
 .result-hint {
   margin-top: 20rpx;
   text-align: center;
-  font-size: 23rpx;
+  font-size: 26rpx;
   line-height: 1.6;
   color: #8A948D;
   padding: 4rpx 12rpx;

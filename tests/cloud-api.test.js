@@ -411,13 +411,13 @@ async function run() {
   console.log('  ok  login creates isolated accounts without exposing openid')
 
   const mixedText = [
-    'AAA',
+    'Alice',
     '2026年11月9日 21:00',
     '[链接] A 的公众号文章 https://mp.weixin.qq.com/s/abc',
-    'AAA',
+    'Bob',
     '2026年11月9日 21:01',
     'https://q.yingjiesheng.com/jobdetail/1.html?jobTitle=%E7%A0%94%E7%A9%B6%E5%91%98',
-    'AAA',
+    'Carol',
     '2026年11月9日 21:02',
     'A 的私有文本'
   ].join('\n')
@@ -504,6 +504,16 @@ async function run() {
   assert.ok(textWechat.total >= 1)
   const textKeyword = ok(await call('getArchiveList', { keyword: '私有文本', page: 1, page_size: 20 }, USER_A))
   assert.strictEqual(textKeyword.total, 1)
+  const sendersA = ok(await call('getSenders', {}, USER_A))
+  assert.strictEqual(sendersA.length, 3)
+  assert.deepStrictEqual(sendersA.map((item) => item.name).sort(), ['Alice', 'Bob', 'Carol'])
+  sendersA.forEach((item) => assert.strictEqual(item.count, 1))
+  const bySender = ok(await call('getArchiveList', { sender: 'Alice', page: 1, page_size: 20 }, USER_A))
+  assert.strictEqual(bySender.total, 1)
+  assert.strictEqual(bySender.records[0].source_sender, 'Alice')
+  const bySenderB = ok(await call('getArchiveList', { sender: 'Alice', page: 1, page_size: 20 }, USER_B))
+  assert.strictEqual(bySenderB.total, 1)
+  assert.strictEqual(bySenderB.records[0].source_sender, 'Alice')
   const byCategory = ok(await call('getArchiveList', { category_id: catA.category._id, page: 1, page_size: 20 }, USER_A))
   assert.strictEqual(byCategory.total, 1)
   const byTag = ok(await call('getArchiveList', { tag_ids: [tagA.tag._id], page: 1, page_size: 20 }, USER_A))
@@ -538,7 +548,7 @@ async function run() {
   for (let i = 1; i < newestFirst.records.length; i++) {
     assert.ok(newestFirst.records[i - 1].saved_at >= newestFirst.records[i].saved_at)
   }
-  console.log('  ok  keyword, type, category, tag, date, pagination and sort filters')
+  console.log('  ok  keyword, type, category, tag, sender, date, pagination and sort filters')
 
   const changedType = ok(await call('updateArchive', {
     archive_id: aTextId,
@@ -556,6 +566,7 @@ async function run() {
     title: '【测试】新的标题'
   }, USER_A))
   assert.strictEqual(retitled.title_initial, 'C')
+  assert.strictEqual(retitled.dedupe_key, changedBack.dedupe_key)
   assert.ok(fail(await call('updateArchive', { archive_id: aTextId, title: '   ' }, USER_A)))
   console.log('  ok  content type correction, title initial recomputation and validation')
 

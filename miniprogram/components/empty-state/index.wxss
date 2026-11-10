@@ -24,14 +24,14 @@
 }
 
 .empty-title {
-  font-size: 32rpx;
+  font-size: 37rpx;
   font-weight: 600;
   color: #26332B;
 }
 
 .empty-desc {
   margin-top: 14rpx;
-  font-size: 26rpx;
+  font-size: 30rpx;
   line-height: 1.6;
   color: #8A948D;
   max-width: 520rpx;
@@ -44,7 +44,7 @@
   border-radius: 38rpx;
   background: #EAF6EE;
   color: #257E4B;
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
   display: flex;
   align-items: center;

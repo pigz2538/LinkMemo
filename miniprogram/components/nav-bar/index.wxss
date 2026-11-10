@@ -47,14 +47,14 @@
 }
 
 .nav-brand-text {
-  font-size: 38rpx;
+  font-size: 44rpx;
   font-weight: 700;
   letter-spacing: 2rpx;
   color: #14201A;
 }
 
 .nav-title {
-  font-size: 36rpx;
+  font-size: 41rpx;
   font-weight: 600;
   color: #14201A;
   margin-left: 8rpx;

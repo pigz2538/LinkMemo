@@ -28,14 +28,14 @@
 }
 
 .profile-name {
-  font-size: 38rpx;
+  font-size: 44rpx;
   font-weight: 700;
   color: #17221C;
 }
 
 .profile-sub {
   margin-top: 8rpx;
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #8A948D;
 }
 
@@ -62,14 +62,14 @@
 }
 
 .stats-num {
-  font-size: 46rpx;
+  font-size: 53rpx;
   font-weight: 700;
   color: #1C2A22;
   line-height: 1.1;
 }
 
 .stats-label {
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #6C7B71;
 }
 
@@ -108,13 +108,13 @@
 
 .menu-text {
   flex: 1;
-  font-size: 30rpx;
+  font-size: 34rpx;
   color: #233029;
   font-weight: 500;
 }
 
 .menu-extra {
-  font-size: 23rpx;
+  font-size: 26rpx;
   color: #9AA39D;
 }
 
@@ -130,7 +130,7 @@
   border-radius: 22rpx;
   background: #EAF7EF;
   color: #2E9E5B;
-  font-size: 30rpx;
+  font-size: 34rpx;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -152,7 +152,7 @@
   align-items: center;
   justify-content: center;
   gap: 10rpx;
-  font-size: 21rpx;
+  font-size: 24rpx;
   color: #A5AEA8;
 }
 
@@ -183,13 +183,13 @@
 }
 
 .option-label {
-  font-size: 30rpx;
+  font-size: 34rpx;
   color: #1F2A24;
   font-weight: 500;
 }
 
 .option-desc {
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
@@ -239,19 +239,19 @@
 }
 
 .data-title {
-  font-size: 28rpx;
+  font-size: 32rpx;
   color: #233029;
   font-weight: 500;
 }
 
 .data-desc {
   margin-top: 4rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
 .data-extra {
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
@@ -269,6 +269,7 @@
 }
 
 .privacy-block {
+  height: 52vh;
   padding: 4rpx 0 6rpx;
 }
 
@@ -282,14 +283,14 @@
 }
 
 .privacy-title {
-  font-size: 27rpx;
+  font-size: 31rpx;
   font-weight: 600;
   color: #233029;
 }
 
 .privacy-text {
   margin-top: 8rpx;
-  font-size: 23rpx;
+  font-size: 26rpx;
   line-height: 1.72;
   color: #6C786F;
 }
@@ -297,7 +298,7 @@
 .privacy-btn {
   margin-top: 24rpx;
   height: 86rpx;
-  font-size: 28rpx;
+  font-size: 32rpx;
 }
 
 .about-sheet {
@@ -324,7 +325,7 @@
 
 .about-title {
   margin-top: 16rpx;
-  font-size: 40rpx;
+  font-size: 46rpx;
   font-weight: 700;
   letter-spacing: 4rpx;
   color: #17221C;
@@ -332,13 +333,13 @@
 
 .about-version {
   margin-top: 6rpx;
-  font-size: 22rpx;
+  font-size: 25rpx;
   color: #9AA39D;
 }
 
 .about-text {
   margin-top: 22rpx;
-  font-size: 26rpx;
+  font-size: 30rpx;
   line-height: 1.7;
   color: #526058;
   max-width: 560rpx;
@@ -358,7 +359,7 @@
   align-items: flex-start;
   gap: 10rpx;
   padding: 9rpx 0;
-  font-size: 23rpx;
+  font-size: 26rpx;
   line-height: 1.55;
   color: #607067;
 }
@@ -376,5 +377,5 @@
   margin-top: 28rpx;
   width: 100%;
   height: 86rpx;
-  font-size: 28rpx;
+  font-size: 32rpx;
 }

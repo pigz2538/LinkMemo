@@ -2,10 +2,20 @@
   "description": "拾链 LinkMemo - 微信聊天内容收集与归档小程序",
   "packOptions": {
     "ignore": [
-      { "type": "folder", "value": "docs" },
-      { "type": "folder", "value": "scripts" },
-      { "type": "folder", "value": "tests" }
-    ]
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "scripts",
+        "type": "folder"
+      },
+      {
+        "value": "tests",
+        "type": "folder"
+      }
+    ],
+    "include": []
   },
   "setting": {
     "urlCheck": false,
@@ -43,11 +53,14 @@
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "condition": false
   },
   "compileType": "miniprogram",
   "libVersion": "3.7.12",
-  "appid": "touristappid",
+  "appid": "wx5add57867fad34fd",
   "projectname": "LinkMemo",
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
@@ -55,5 +68,6 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "simulatorPluginLibVersion": {}
 }

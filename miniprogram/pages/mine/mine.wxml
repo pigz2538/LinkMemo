@@ -128,14 +128,6 @@
         </view>
         <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
       </view>
-      <view wx:if="{{!cloudEnabled}}" class="data-row" hover-class="data-row-hover" bindtap="onResetDemo">
-        <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/restore-green.png" mode="aspectFit" /></view>
-        <view class="data-main">
-          <view class="data-title">重置演示数据</view>
-          <view class="data-desc">恢复示例归档、分类与标签</view>
-        </view>
-        <image class="data-arrow" src="/assets/icons/chevron-gray.png" mode="aspectFit" />
-      </view>
       <view class="data-row data-row-danger" hover-class="data-row-hover" bindtap="onDeleteAccountData">
         <view class="data-icon-wrap"><image class="icon-36" src="/assets/icons/logout-red.png" mode="aspectFit" /></view>
         <view class="data-main">
@@ -156,7 +148,7 @@
         <image class="icon-28" src="/assets/icons/close-gray.png" mode="aspectFit" />
       </view>
     </view>
-    <view class="privacy-block">
+    <scroll-view class="privacy-block" scroll-y="{{true}}">
       <view class="privacy-item">
         <view class="privacy-title">只处理主动提供的内容</view>
         <view class="privacy-text">拾链不读取微信聊天记录，只处理你主动粘贴或点击读取的剪贴板文本。</view>
@@ -177,7 +169,7 @@
         <view class="privacy-title">你的控制权</view>
         <view class="privacy-text">你可以在「数据管理」中导出全部数据、清空回收站或删除账号数据，也可以随时退出登录。</view>
       </view>
-    </view>
+    </scroll-view>
     <view class="btn btn-primary privacy-btn" hover-class="btn-hover" bindtap="onClosePrivacy">知道了</view>
   </view>
 

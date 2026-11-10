@@ -414,9 +414,9 @@ function buildSummary(type, body, url) {
   return ''
 }
 
-function makeDedupeKey(type, url, body, title) {
+function makeDedupeKey(type, url, body) {
   if (url) return 'u:' + normalizeUrlForKey(url)
-  return 't:' + hashString(type + '|' + title + '|' + String(body || '').trim())
+  return 't:' + hashString(type + '|' + String(body || '').trim())
 }
 
 const MAX_URLS_PER_MESSAGE = 20

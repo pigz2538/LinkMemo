@@ -275,6 +275,9 @@ function buildListWhere(userId, p) {
     base.tag_ids = p.tag_match === 'or' ? _.in(tagIds) : _.all(tagIds)
   }
 
+  const sender = String(p.sender || '').trim()
+  if (sender) base.source_sender = sender
+
   if (p.date_from || p.date_to) {
     if (p.date_from && p.date_to) {
       base.saved_at = _.gte(Number(p.date_from)).and(_.lte(Number(p.date_to)))
@@ -420,9 +423,8 @@ async function updateArchiveInternal(userId, payload) {
     const effectiveUrl = update.url !== undefined ? update.url : item.url
     if (!effectiveUrl) {
       const effectiveType = update.content_type || item.content_type
-      const effectiveTitle = update.title || item.title
-      const effectiveContent = update.content !== undefined ? update.content : (item.content || item.source_text || '')
-      update.dedupe_key = 't:' + parser.hashString(effectiveType + '|' + effectiveTitle + '|' + effectiveContent)
+      const effectiveContent = item.source_text || update.content || item.content || ''
+      update.dedupe_key = 't:' + parser.hashString(effectiveType + '|' + effectiveContent)
     }
     update.updated_at = Date.now()
     await db.collection('archive_items').doc(id).update({ data: update })
@@ -546,6 +548,21 @@ async function getCategories(userId) {
   return (catRes.data || []).map((item) => Object.assign({}, item, {
     usage_count: counts[item._id] || 0
   }))
+}
+
+async function getSenders(userId) {
+  const res = await db.collection('archive_items').aggregate()
+    .match({ user_id: userId, deleted_at: null })
+    .group({ _id: '$source_sender', count: $.sum(1) })
+    .end()
+
+  return (res.list || [])
+    .map((row) => ({
+      name: String(row._id || '').trim(),
+      count: row.count
+    }))
+    .filter((row) => !!row.name)
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
 }
 
 async function getTags(userId) {
@@ -812,6 +829,8 @@ exports.main = async (event, context) => {
         return ok(await getCategories(userId))
       case 'getTags':
         return ok(await getTags(userId))
+      case 'getSenders':
+        return ok(await getSenders(userId))
       case 'manageCategory':
         return ok(await manageCategory(userId, payload))
       case 'manageTag':
